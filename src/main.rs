@@ -8,7 +8,16 @@ slint::include_modules!();
 fn main() -> Result<(), Box<dyn Error>> {
     let ui = AppWindow::new()?;
 
-    ui.run()?;
+    println!("RUST");
 
+    ui.on_verb_edited({
+        let ui_handle = ui.as_weak();
+        move |verb| {
+            let ui = ui_handle.unwrap();
+            ui.set_verb(verb);
+        }
+    });
+
+    ui.run()?;
     Ok(())
 }

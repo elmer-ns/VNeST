@@ -2,65 +2,70 @@ import { Button, VerticalBox } from "std-widgets.slint";
 
 export component AppWindow inherits Window {
     //width: 400px; height: 400px;
-    
+    in-out property <string> verb: "test";
+    callback verb_edited(string);
+
+    property <length> padx: self.width*0.05;
+    property <length> pady: self.height*0.05;
+
+    forward-focus: verb_input;
+    background: white;
 
     VerticalLayout {
-        spacing: 10px;
-        padding: 10px;
+        spacing: padx;
+        padding: pady;
 
         HorizontalLayout {
-            spacing: 10px;
-            //alignment: space-around;
+            spacing: padx;
             Rectangle {border-width: 2px ;border-color: blue; 
-                TextInput {text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
+                Text {color: black; text: "Vem"; vertical-alignment: center; horizontal-alignment: center;}
             }
             Rectangle {border-width: 2px; border-color: blue;
-                Text {text: "Test";}
-                min-width: parent.width/3.0;
+                verb_input := TextInput {color: black; text: verb; vertical-alignment: center; horizontal-alignment: center;edited => {verb_edited(self.text)}}
+                max-width: parent.width/3.0;
             }
             Rectangle {border-width: 2px; border-color: blue;
-                TextInput {text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
+                Text {color: black; text: "Vad"; vertical-alignment: center; horizontal-alignment: center;}
             }
         }
         HorizontalLayout {
-            spacing: 10px;
+            spacing: padx;
             Rectangle {border-width: 2px ;border-color: blue; 
-                TextInput {text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
+                TextInput {color: black; text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
             }
             Rectangle {border-width: 2px; border-color: blue;
-                Text {text: "Test";}
+                Text {color: black; text: verb;}
                 min-width: parent.width/3.0;
             }
             Rectangle {border-width: 2px; border-color: blue;
-                TextInput {text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
+                TextInput {color: black; text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
             }
         }
         HorizontalLayout {
-            spacing: 10px;
+            spacing: padx;
             Rectangle {border-width: 2px ;border-color: blue; 
-                TextInput {text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
+                TextInput {color: black; text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
             }
             Rectangle {border-width: 2px; border-color: blue;
-                Text {text: "Test";}
+                Text {color: black; text: verb;}
                 min-width: parent.width/3.0;
             }
             Rectangle {border-width: 2px; border-color: blue;
-                TextInput {text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
+                TextInput {color: black; text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
             }
         }
         HorizontalLayout {
-            spacing: 10px;
+            spacing: padx;
             Rectangle {border-width: 2px ;border-color: blue; 
-                TextInput {text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
+                TextInput {color: black; text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
             }
             Rectangle {border-width: 2px; border-color: blue;
-                Text {text: "Test";}
+                Text {color: black; text: verb;}
                 min-width: parent.width/3.0;
             }
             Rectangle {border-width: 2px; border-color: blue;
-                TextInput {text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
+                TextInput {color: black; text: "Test"; vertical-alignment: center; horizontal-alignment: center;}
             }
         }
     }
-    
 }
