@@ -4348,6 +4348,7 @@ dependencies = [
 name = "slint-rust-template"
 version = "0.1.0"
 dependencies = [
+ "image",
  "slint",
  "slint-build",
 ]
