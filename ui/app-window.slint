@@ -62,45 +62,64 @@ component Verb {
     }
 }
 
+component Component inherits Rectangle {
+    in property <percent> padding_percent;
+    in property <percent> spacing_percent;
+    
+    out property <string> name;
+
+    forward-focus: verb;
+
+    callback next();
+
+    VerticalLayout {
+        spacing: parent.height*spacing_percent;
+        padding: parent.height*padding_percent;
+
+        verb := Verb {
+            spacing: parent.width*spacing_percent;
+            next => {
+                wh1.focus()
+            }
+        }
+        wh1 := WhoWhat {
+            spacing: parent.width*spacing_percent;
+            verb: verb.verb;
+            next => {
+                wh2.focus()
+            }
+        }
+        wh2 := WhoWhat {
+            spacing: parent.width*spacing_percent;
+            verb: verb.verb;
+            next => {
+                wh3.focus()
+            }
+        }
+        wh3 := WhoWhat {
+            spacing: parent.width*spacing_percent;
+            verb: verb.verb;
+            next => {
+                next();
+            }
+        }
+    }
+}
+
 export component AppWindow inherits Window {
     property <length> padx: self.width*0.05;
     property <length> pady: self.height*0.05;
 
     in property <image> ico;
 
-    forward-focus: v1;
+    forward-focus: test;
     background: white;
 
     title: "VNeST-S";
     icon: ico;
 
-    VerticalLayout {
-        spacing: padx;
-        padding: self.height*0.15;
-
-        v1 := Verb {
-            spacing: padx;
-            next => {
-                wh1.focus()
-            }
-        }
-        wh1 := WhoWhat {
-            spacing: padx;
-            verb: v1.verb;
-            next => {
-                wh2.focus()
-            }
-        }
-        wh2 := WhoWhat {
-            spacing: padx;
-            verb: v1.verb;
-            next => {
-                wh3.focus()
-            }
-        }
-        wh3 := WhoWhat {
-            spacing: padx;
-            verb: v1.verb;
-        }
+    test := Component {
+        padding_percent: 15%;
+        spacing_percent: 10%;
     }
 }
