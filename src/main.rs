@@ -15,9 +15,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     ui.set_ico(slint::Image::from_rgba8(icon));
 
     ui.global::<ValidateString>().on_limit_size({
-        let ui_handle = ui.as_weak();
+        //let ui_handle = ui.as_weak();
         move |mut string: slint::SharedString, max_length: f32,font_size: f32| {
-            let ui = ui_handle.unwrap();
+            //let ui = ui_handle.unwrap();
             
             if string == "" {return string}
 
