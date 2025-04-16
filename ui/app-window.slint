@@ -1,8 +1,18 @@
 import { Button, VerticalBox } from "std-widgets.slint";
 
+import "../NotoSans.ttf";
+import "../SpaceMono-Regular.ttf";
+
+
+export global ValidateString {
+    callback limit_size(string,length,length) -> string;
+}
+
 component WhoWhat {
     out property <string> who;
     out property <string> what;
+
+    in property <length> font-size;
 
     in property <length> spacing;
 
@@ -16,28 +26,29 @@ component WhoWhat {
         spacing: spacing;
         Rectangle {border-width: 2px ;border-color: blue; 
             Who := TextInput {
-                color: black; text: who; vertical-alignment: center; horizontal-alignment: center;
-                edited => {who=self.text}
+                color: black; text: who; vertical-alignment: center; horizontal-alignment: center; font-size: root.font-size;
+                edited => {self.text=ValidateString.limit_size(self.text,self.width,self.font-size);who=self.text}
                 accepted => {What.focus()}
             }
         }
         Rectangle {border-width: 2px; border-color: blue;
-            Text {color: black; text: verb;}
-            min-width: parent.width/3.0;
+            Text {color: black; text: verb; font-size: root.font-size;}
+            width: root.width/3.0-root.spacing/2.0;
         }
         Rectangle {border-width: 2px; border-color: blue;
             What := TextInput {
-                color: black; text: what; vertical-alignment: center; horizontal-alignment: center;
-                edited => {what=self.text}
+                color: black; text: what; vertical-alignment: center; horizontal-alignment: center; font-size: root.font-size;
+                edited => {self.text=ValidateString.limit_size(self.text,self.width,self.font-size);what=self.text}
                 accepted => {next()}
             }
         }
     }
 }
-
-component Verb {
+export component Verb inherits Rectangle {
     out property <string> verb;
     in property <length> spacing;
+
+    in property <length> font-size;
 
     callback next();
 
@@ -46,18 +57,18 @@ component Verb {
     HorizontalLayout {
         spacing: spacing;
         Rectangle {border-width: 2px ;border-color: blue; 
-            Text {color: black; text: "Vem"; vertical-alignment: center; horizontal-alignment: center;}
+            Text {color: black; text: "Vem"; vertical-alignment: center; horizontal-alignment: center; font-size: root.font-size;}
         }
         Rectangle {border-width: 2px; border-color: blue;
             verb_input := TextInput {
-                color: black; text: verb; vertical-alignment: center; horizontal-alignment: center;
-                edited => {verb=self.text}
-                accepted => {next()}
+                color: black; text: verb; vertical-alignment: center; horizontal-alignment: center; font-size: root.font-size;
+                edited => {self.text=ValidateString.limit_size(self.text,self.width,self.font-size);verb=self.text}
+                accepted => {next();}
             }
-            max-width: parent.width/3.0;
+            width: root.width/3.0-root.spacing/2.0;
         }
         Rectangle {border-width: 2px; border-color: blue;
-            Text {color: black; text: "Vad"; vertical-alignment: center; horizontal-alignment: center;}
+            Text {color: black; text: "Vad"; vertical-alignment: center; horizontal-alignment: center; font-size: root.font-size;}
         }
     }
 }
@@ -66,7 +77,7 @@ component Component inherits Rectangle {
     in property <percent> padding_percent;
     in property <percent> spacing_percent;
     
-    out property <string> name;
+    in property <length> font-size;
 
     forward-focus: verb;
 
@@ -77,12 +88,14 @@ component Component inherits Rectangle {
         padding: parent.height*padding_percent;
 
         verb := Verb {
+            font-size: root.font-size;
             spacing: parent.width*spacing_percent;
             next => {
                 wh1.focus()
             }
         }
         wh1 := WhoWhat {
+            font-size: root.font-size;
             spacing: parent.width*spacing_percent;
             verb: verb.verb;
             next => {
@@ -90,6 +103,7 @@ component Component inherits Rectangle {
             }
         }
         wh2 := WhoWhat {
+            font-size: root.font-size;
             spacing: parent.width*spacing_percent;
             verb: verb.verb;
             next => {
@@ -97,6 +111,7 @@ component Component inherits Rectangle {
             }
         }
         wh3 := WhoWhat {
+            font-size: root.font-size;
             spacing: parent.width*spacing_percent;
             verb: verb.verb;
             next => {
@@ -107,10 +122,12 @@ component Component inherits Rectangle {
 }
 
 export component AppWindow inherits Window {
-    property <length> padx: self.width*0.05;
-    property <length> pady: self.height*0.05;
-
     in property <image> ico;
+
+    default-font-family: "Space Mono";
+
+    min-width: 600px;
+    min-height: 500px;
 
     forward-focus: test;
     background: white;
@@ -119,7 +136,8 @@ export component AppWindow inherits Window {
     icon: ico;
 
     test := Component {
-        padding_percent: 15%;
+        font-size: parent.width*0.015;
+        padding_percent: 10%;
         spacing_percent: 10%;
     }
 }

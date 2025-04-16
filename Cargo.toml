@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 image = { version = "0.25.6", features = ["ico"] }
 slint = "1.8.0"
+text-measurer-harfbuzz = "0.1.0"
 
 [build-dependencies]
 slint-build = "1.8.0"
