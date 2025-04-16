@@ -3,6 +3,16 @@
 version = 4
 
 [[package]]
+name = "VNeST"
+version = "0.1.0"
+dependencies = [
+ "image",
+ "slint",
+ "slint-build",
+ "text-measurer-harfbuzz",
+]
+
+[[package]]
 name = "ab_glyph"
 version = "0.2.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4436,16 +4446,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "spin_on",
-]
-
-[[package]]
-name = "slint-rust-template"
-version = "0.1.0"
-dependencies = [
- "image",
- "slint",
- "slint-build",
- "text-measurer-harfbuzz",
 ]
 
 [[package]]
