@@ -4,7 +4,7 @@
 use std::error::Error;
 use image;
 use slint::{Rgba8Pixel, SharedPixelBuffer};
-use text_measurer_harfbuzz::measure_text_width;
+//use text_measurer_harfbuzz::measure_text_width;
 
 slint::include_modules!();
 
@@ -20,11 +20,11 @@ fn main() -> Result<(), Box<dyn Error>> {
             //let ui = ui_handle.unwrap();
             
             if string == "" {return string}
-
+            /* 
             while measure_text_width(include_bytes!("../SpaceMono-Regular.ttf").to_vec(), font_size as u32, &string).unwrap() as f32 > max_length*0.85 {
                 string = string.split_at(string.len()-1).0.into()
             }
-   
+            */
             string
         }
     });
