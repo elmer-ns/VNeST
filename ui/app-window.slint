@@ -122,7 +122,10 @@ component Component inherits Rectangle {
 }
 
 export component AppWindow inherits Window {
-    in property <image> ico;
+    in property <image> _icon;
+
+    title: "VNeST-S";
+    icon: _icon;
 
     default-font-family: "Space Mono";
 
@@ -131,9 +134,6 @@ export component AppWindow inherits Window {
 
     forward-focus: test;
     background: white;
-
-    title: "VNeST-S";
-    icon: ico;
 
     test := Component {
         font-size: parent.width*0.015;

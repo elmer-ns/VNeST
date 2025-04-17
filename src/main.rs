@@ -12,7 +12,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let ui = AppWindow::new()?;
 
     let icon = load_icon()?;
-    ui.set_ico(slint::Image::from_rgba8(icon));
+    ui.set__icon(slint::Image::from_rgba8(icon));
 
     ui.global::<ValidateString>().on_limit_size({
         //let ui_handle = ui.as_weak();
