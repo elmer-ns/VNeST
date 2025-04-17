@@ -73,7 +73,7 @@ export component Verb inherits Rectangle {
     }
 }
 
-component Component inherits Rectangle {
+component View1 inherits Rectangle {
     in property <percent> padding_percent;
     in property <percent> spacing_percent;
     
@@ -121,6 +121,8 @@ component Component inherits Rectangle {
     }
 }
 
+enum State {view1, help}
+
 export component AppWindow inherits Window {
     in property <image> _icon;
 
@@ -132,12 +134,38 @@ export component AppWindow inherits Window {
     min-width: 600px;
     min-height: 500px;
 
-    forward-focus: test;
+    forward-focus: View1;
     background: white;
 
-    test := Component {
+    property <State> state: State.view1;
+
+    states [
+        view1 when state == State.view1: {
+            View1.visible: true;
+            HelpButton.visible: true;
+        }
+        help when state == State.help: {
+            View1.visible: false;
+            HelpButton.visible: false;
+        }
+    ]
+
+    View1 := View1 {
         font-size: parent.width*0.015;
         padding_percent: 10%;
         spacing_percent: 10%;
+    }
+    HelpButton := Rectangle {
+        background: green;
+        width: (root.width+root.height)*0.02;
+        height: (root.width+root.height)*0.02;
+        x: self.width * 0.5;
+        y: root.height - self.height*1.5;
+
+        TouchArea {
+            clicked => {
+                state = State.help;
+            }
+        }
     }
 }
