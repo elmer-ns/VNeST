@@ -5,7 +5,69 @@ import "../SpaceMono-Regular.ttf";
 
 
 export global ValidateString {
-    callback limit_size(string,length,length) -> string;
+    callback limit_size(string,length,length) -> length;
+}
+
+component TextBox {
+    in property <length> border-width;
+    in property <color> border-color;
+
+    in property <length> font-size;
+    in property <string> text;
+    in property <color> text-color;
+
+    public function update-font-size() {
+        t1.font-size = ValidateString.limit_size(t1.text, r1.width, font-size);
+        debug("Weeee");
+    }
+
+    r1 := Rectangle {
+        border-color: border-color;
+        border-width: border-width;
+
+        t1 := Text {
+            color: text-color; 
+            text: text; 
+            font-size: font-size;
+            vertical-alignment: center; 
+            horizontal-alignment: center;
+        }
+    }
+}
+component TextInputBox {
+    in property <length> border-width;
+    in property <color> border-color;
+
+    in property <length> font-size;
+    in-out property <string> text;
+    in property <color> text-color;
+
+    callback accepted();
+    callback edited();
+
+    callback update();
+
+    public function update-font-size() {
+        t1.font-size = ValidateString.limit_size(t1.text, t1.width, font-size);
+    }
+
+    forward-focus: t1;
+
+    Rectangle {
+        border-color: border-color;
+        border-width: border-width;
+
+        t1 := TextInput {
+            color: text-color; 
+            text: text; 
+            font-size: font-size;
+            vertical-alignment: center; 
+            horizontal-alignment: center;
+
+            accepted => {accepted();update()}
+            edited => {text=self.text;edited();update()}
+        }
+    }
 }
 
 component WhoWhat {
@@ -18,29 +80,49 @@ component WhoWhat {
 
     in property <string> verb;
 
-    forward-focus: Who;
+    forward-focus: t1;
 
     callback next();
+    callback update();
+
+    public function update-font-size() {
+        t1.update-font-size();
+        t2.update-font-size();
+        t3.update-font-size();
+    }
 
     HorizontalLayout {
         spacing: spacing;
-        Rectangle {border-width: 2px ;border-color: blue; 
-            Who := TextInput {
-                color: black; text: who; vertical-alignment: center; horizontal-alignment: center; font-size: root.font-size;
-                edited => {self.text=ValidateString.limit_size(self.text,self.width,self.font-size);who=self.text}
-                accepted => {What.focus()}
-            }
+        t1 := TextInputBox { //Who
+            border-width: 2px; border-color: blue;
+            text-color: black; 
+            text: who; 
+            font-size: root.font-size;
+
+            edited => {who=self.text}
+            accepted => {t3.focus()}
+
+            update => {update()}
         }
-        Rectangle {border-width: 2px; border-color: blue;
-            Text {color: black; text: verb; font-size: root.font-size;}
+        t2 := TextBox { // Verb
+            border-width: 2px; 
+            border-color: blue;
+            text-color: black; 
+            text: verb; 
+            font-size: root.font-size;
+
             width: root.width/3.0-root.spacing/2.0;
         }
-        Rectangle {border-width: 2px; border-color: blue;
-            What := TextInput {
-                color: black; text: what; vertical-alignment: center; horizontal-alignment: center; font-size: root.font-size;
-                edited => {self.text=ValidateString.limit_size(self.text,self.width,self.font-size);what=self.text}
-                accepted => {next()}
-            }
+        t3 := TextInputBox { //What
+            border-width: 2px; border-color: blue;
+            text-color: black; 
+            text: what; 
+            font-size: root.font-size;
+
+            edited => {what=self.text}
+            accepted => {next()}
+
+            update => {update()}
         }
     }
 }
@@ -51,24 +133,46 @@ export component Verb inherits Rectangle {
     in property <length> font-size;
 
     callback next();
+    callback update();
 
-    forward-focus: verb_input;
+    public function update-font-size() {
+        t1.update-font-size();
+        t2.update-font-size();
+        t3.update-font-size();
+    }
+
+    forward-focus: t2;
 
     HorizontalLayout {
         spacing: spacing;
-        Rectangle {border-width: 2px ;border-color: blue; 
-            Text {color: black; text: "Vem"; vertical-alignment: center; horizontal-alignment: center; font-size: root.font-size;}
+        
+        t1 := TextBox {
+            border-width: 2px;
+            border-color: blue;
+            text-color: black;
+            text: "Vem";
+            font-size: root.font-size;
         }
-        Rectangle {border-width: 2px; border-color: blue;
-            verb_input := TextInput {
-                color: black; text: verb; vertical-alignment: center; horizontal-alignment: center; font-size: root.font-size;
-                edited => {self.text=ValidateString.limit_size(self.text,self.width,self.font-size);verb=self.text}
-                accepted => {next();}
-            }
+        t2 := TextInputBox {
+            border-width: 2px;
+            border-color: blue;
+            text-color: black;
+            text: verb;
+            font-size: root.font-size;
+
             width: root.width/3.0-root.spacing/2.0;
+
+            edited => {verb=self.text;}
+            accepted => {next()}
+
+            update => {update()}
         }
-        Rectangle {border-width: 2px; border-color: blue;
-            Text {color: black; text: "Vad"; vertical-alignment: center; horizontal-alignment: center; font-size: root.font-size;}
+        t3 := TextBox {
+            border-width: 2px;
+            border-color: blue;
+            text-color: black;
+            text: "Vad";
+            font-size: root.font-size;
         }
     }
 }
@@ -83,6 +187,13 @@ component View1 inherits Rectangle {
 
     callback next();
 
+    public function update-font-size() {
+        verb.update-font-size();
+        wh1.update-font-size();
+        wh2.update-font-size();
+        wh3.update-font-size();
+    }
+
     VerticalLayout {
         spacing: parent.height*spacing_percent;
         padding: parent.height*padding_percent;
@@ -93,6 +204,8 @@ component View1 inherits Rectangle {
             next => {
                 wh1.focus()
             }
+
+            update => {update-font-size()}
         }
         wh1 := WhoWhat {
             font-size: root.font-size;
@@ -101,6 +214,8 @@ component View1 inherits Rectangle {
             next => {
                 wh2.focus()
             }
+
+            update => {update-font-size()}
         }
         wh2 := WhoWhat {
             font-size: root.font-size;
@@ -109,6 +224,8 @@ component View1 inherits Rectangle {
             next => {
                 wh3.focus()
             }
+
+            update => {update-font-size()}
         }
         wh3 := WhoWhat {
             font-size: root.font-size;
@@ -117,14 +234,29 @@ component View1 inherits Rectangle {
             next => {
                 next();
             }
+
+            update => {update-font-size()}
         }
     }
 }
 
 enum State {view1, help}
 
+component Watchdog {
+    in-out property <length> window-width;
+    in-out property <length> window-height;
+}
+
 export component AppWindow inherits Window {
     in property <image> _icon;
+
+    changed width => {resized()}
+    changed height => {resized()}
+    
+    function resized() {
+        View1.update-font-size()
+    }
+
 
     title: "VNeST-S";
     icon: _icon;
@@ -151,7 +283,7 @@ export component AppWindow inherits Window {
     ]
 
     View1 := View1 {
-        font-size: parent.width*0.015;
+        font-size: parent.width*0.035;
         padding_percent: 10%;
         spacing_percent: 10%;
     }
