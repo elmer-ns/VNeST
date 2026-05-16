@@ -1,0 +1,73 @@
+export global ValidateString {
+    callback limit_size(string, length, length) -> length;
+}
+
+export component TextBox {
+    in property <length> border-width;
+    in property <color> border-color;
+
+    in property <length> font-size;
+    in property <string> text;
+    in property <color> text-color;
+
+    public function update-font-size() {
+        t1.font-size = ValidateString.limit_size(t1.text, r1.width, font-size);
+        debug("Weeee");
+    }
+
+    r1 := Rectangle {
+        border-color: border-color;
+        border-width: border-width;
+
+        t1 := Text {
+            color: text-color;
+            text: text;
+            font-size: font-size;
+            vertical-alignment: center;
+            horizontal-alignment: center;
+        }
+    }
+}
+
+export component TextInputBox {
+    in property <length> border-width;
+    in property <color> border-color;
+
+    in property <length> font-size;
+    in-out property <string> text;
+    in property <color> text-color;
+
+    callback accepted();
+    callback edited();
+
+    callback update();
+
+    public function update-font-size() {
+        t1.font-size = ValidateString.limit_size(t1.text, t1.width, font-size);
+    }
+
+    forward-focus: t1;
+
+    Rectangle {
+        border-color: border-color;
+        border-width: border-width;
+
+        t1 := TextInput {
+            color: text-color;
+            text: text;
+            font-size: font-size;
+            vertical-alignment: center;
+            horizontal-alignment: center;
+
+            accepted => {
+                accepted();
+                update()
+            }
+            edited => {
+                text = self.text;
+                edited();
+                update()
+            }
+        }
+    }
+}

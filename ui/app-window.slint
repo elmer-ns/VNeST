@@ -1,303 +1,182 @@
-import { Button, VerticalBox } from "std-widgets.slint";
-
+import { TextBox, TextInputBox, TextBox } from "text_box.slint";
 import "../NotoSans.ttf";
-import "../SpaceMono-Regular.ttf";
 
+import "fonts/SpaceMono/SpaceMono-Regular.ttf";
+import "fonts/SpaceMono/SpaceMono-Bold.ttf";
+import "fonts/SpaceMono/SpaceMono-BoldItalic.ttf";
+import "fonts/SpaceMono/SpaceMono-Italic.ttf";
+import { Button } from "std-widgets.slint";
+import { VNeSTMain } from "vnest.slint";
 
-export global ValidateString {
-    callback limit_size(string,length,length) -> length;
-}
+export enum State {menu, about, vnest}
 
-component TextBox {
-    in property <length> border-width;
-    in property <color> border-color;
+component MainMenu inherits Rectangle {
+    width: 100%;
+    height: 100%;
 
-    in property <length> font-size;
-    in property <string> text;
-    in property <color> text-color;
-
-    public function update-font-size() {
-        t1.font-size = ValidateString.limit_size(t1.text, r1.width, font-size);
-        debug("Weeee");
-    }
-
-    r1 := Rectangle {
-        border-color: border-color;
-        border-width: border-width;
-
-        t1 := Text {
-            color: text-color; 
-            text: text; 
-            font-size: font-size;
-            vertical-alignment: center; 
-            horizontal-alignment: center;
-        }
-    }
-}
-component TextInputBox {
-    in property <length> border-width;
-    in property <color> border-color;
-
-    in property <length> font-size;
-    in-out property <string> text;
-    in property <color> text-color;
-
-    callback accepted();
-    callback edited();
-
-    callback update();
-
-    public function update-font-size() {
-        t1.font-size = ValidateString.limit_size(t1.text, t1.width, font-size);
-    }
-
-    forward-focus: t1;
-
-    Rectangle {
-        border-color: border-color;
-        border-width: border-width;
-
-        t1 := TextInput {
-            color: text-color; 
-            text: text; 
-            font-size: font-size;
-            vertical-alignment: center; 
-            horizontal-alignment: center;
-
-            accepted => {accepted();update()}
-            edited => {text=self.text;edited();update()}
-        }
-    }
-}
-
-component WhoWhat {
-    out property <string> who;
-    out property <string> what;
-
-    in property <length> font-size;
-
-    in property <length> spacing;
-
-    in property <string> verb;
-
-    forward-focus: t1;
-
-    callback next();
-    callback update();
-
-    public function update-font-size() {
-        t1.update-font-size();
-        t2.update-font-size();
-        t3.update-font-size();
-    }
-
-    HorizontalLayout {
-        spacing: spacing;
-        t1 := TextInputBox { //Who
-            border-width: 2px; border-color: blue;
-            text-color: black; 
-            text: who; 
-            font-size: root.font-size;
-
-            edited => {who=self.text}
-            accepted => {t3.focus()}
-
-            update => {update()}
-        }
-        t2 := TextBox { // Verb
-            border-width: 2px; 
-            border-color: blue;
-            text-color: black; 
-            text: verb; 
-            font-size: root.font-size;
-
-            width: root.width/3.0-root.spacing/2.0;
-        }
-        t3 := TextInputBox { //What
-            border-width: 2px; border-color: blue;
-            text-color: black; 
-            text: what; 
-            font-size: root.font-size;
-
-            edited => {what=self.text}
-            accepted => {next()}
-
-            update => {update()}
-        }
-    }
-}
-export component Verb inherits Rectangle {
-    out property <string> verb;
-    in property <length> spacing;
-
-    in property <length> font-size;
-
-    callback next();
-    callback update();
-
-    public function update-font-size() {
-        t1.update-font-size();
-        t2.update-font-size();
-        t3.update-font-size();
-    }
-
-    forward-focus: t2;
-
-    HorizontalLayout {
-        spacing: spacing;
-        
-        t1 := TextBox {
-            border-width: 2px;
-            border-color: blue;
-            text-color: black;
-            text: "Vem";
-            font-size: root.font-size;
-        }
-        t2 := TextInputBox {
-            border-width: 2px;
-            border-color: blue;
-            text-color: black;
-            text: verb;
-            font-size: root.font-size;
-
-            width: root.width/3.0-root.spacing/2.0;
-
-            edited => {verb=self.text;}
-            accepted => {next()}
-
-            update => {update()}
-        }
-        t3 := TextBox {
-            border-width: 2px;
-            border-color: blue;
-            text-color: black;
-            text: "Vad";
-            font-size: root.font-size;
-        }
-    }
-}
-
-component View1 inherits Rectangle {
-    in property <percent> padding_percent;
-    in property <percent> spacing_percent;
-    
-    in property <length> font-size;
-
-    forward-focus: verb;
-
-    callback next();
-
-    public function update-font-size() {
-        verb.update-font-size();
-        wh1.update-font-size();
-        wh2.update-font-size();
-        wh3.update-font-size();
-    }
+    in-out property <State> state;
 
     VerticalLayout {
-        spacing: parent.height*spacing_percent;
-        padding: parent.height*padding_percent;
+        alignment: center;
+        spacing: 15px;
 
-        verb := Verb {
-            font-size: root.font-size;
-            spacing: parent.width*spacing_percent;
-            next => {
-                wh1.focus()
-            }
-
-            update => {update-font-size()}
+        Text {
+            text: "Verb - Nätverksstärkande Träning (VNeST-S)";
+            font-size: 32px;
+            font-weight: 800;
+            horizontal-alignment: center;
         }
-        wh1 := WhoWhat {
-            font-size: root.font-size;
-            spacing: parent.width*spacing_percent;
-            verb: verb.verb;
-            next => {
-                wh2.focus()
-            }
 
-            update => {update-font-size()}
+        Text {
+            text: "Verb Network Strengthening Treatment - svensk version";
+            font-size: 24px;
+            horizontal-alignment: center;
         }
-        wh2 := WhoWhat {
-            font-size: root.font-size;
-            spacing: parent.width*spacing_percent;
-            verb: verb.verb;
-            next => {
-                wh3.focus()
+
+        HorizontalLayout {
+            alignment: center;
+            padding-top: 25px;
+            width: 50%;
+            spacing: 50px;
+
+            Button {
+                text: "Starta";
+                primary: true;
+
+                clicked => {
+                    state = State.vnest;
+                }
             }
 
-            update => {update-font-size()}
-        }
-        wh3 := WhoWhat {
-            font-size: root.font-size;
-            spacing: parent.width*spacing_percent;
-            verb: verb.verb;
-            next => {
-                next();
-            }
+            Button {
+                text: "Om";
 
-            update => {update-font-size()}
+                clicked => {
+                    state = State.about;
+                }
+            }
         }
     }
 }
 
-enum State {view1, help}
+component AboutPage inherits Rectangle {
+    width: 100%;
+    height: 100%;
 
-component Watchdog {
-    in-out property <length> window-width;
-    in-out property <length> window-height;
+    in-out property <State> state;
+
+    Button {
+        text: "Tillbaka";
+        clicked => {
+            state = State.menu;
+            debug("Back")
+        }
+
+        x: 20px;
+        y: parent.height - self.height - 20px;
+    }
 }
 
-export component AppWindow inherits Window {
-    in property <image> _icon;
+component VNeST inherits Rectangle {
+    in-out property <State> app_state;
+    property <int> stage: 0;
 
-    changed width => {resized()}
-    changed height => {resized()}
-    
-    function resized() {
-        View1.update-font-size()
+    Button {
+        text: "Tillbaka";
+        clicked => {
+            if (stage == 0) {
+                app_state = State.menu;
+            } else {
+                stage -= 1;
+            }
+        }
+
+        x: 20px;
+        y: parent.height - self.height - 20px;
     }
 
+    VNeSTMain {
+        stage <=> stage;
+    }
+}
+
+export component Test inherits Window {
+    property <State> state;
 
     title: "VNeST-S";
-    icon: _icon;
+
+    state: State.menu;
 
     default-font-family: "Space Mono";
-
-    min-width: 600px;
-    min-height: 500px;
-
-    forward-focus: View1;
-    background: white;
-
-    property <State> state: State.view1;
+    default-font-size: 24px;
 
     states [
-        view1 when state == State.view1: {
-            View1.visible: true;
-            HelpButton.visible: true;
+        menu when state == State.menu: {
+            menu.visible: true;
+            about.visible: false;
+            vnest.visible: false;
         }
-        help when state == State.help: {
-            View1.visible: false;
-            HelpButton.visible: false;
+        about when state == State.about: {
+            menu.visible: false;
+            about.visible: true;
+            vnest.visible: false;
+        }
+        vnest when state == State.vnest: {
+            menu.visible: false;
+            about.visible: false;
+            vnest.visible: true;
         }
     ]
 
-    View1 := View1 {
-        font-size: parent.width*0.035;
-        padding_percent: 10%;
-        spacing_percent: 10%;
+    menu := MainMenu {
+        state <=> state;
     }
-    HelpButton := Rectangle {
-        background: green;
-        width: (root.width+root.height)*0.02;
-        height: (root.width+root.height)*0.02;
-        x: self.width * 0.5;
-        y: root.height - self.height*1.5;
 
-        TouchArea {
-            clicked => {
-                state = State.help;
-            }
+    about := AboutPage {
+        state <=> state;
+    }
+
+    vnest := VNeST {
+        app_state <=> state;
+    }
+}
+
+export component AppWindow inherits Window {
+    state: State.vnest;
+    title: "VNeST-S";
+
+    default-font-family: "Space Mono";
+    default-font-size: 24px;
+
+    property <State> state;
+
+    states [
+        menu when state == State.menu: {
+            menu.visible: true;
+            about.visible: false;
+            vnest.visible: false;
         }
+        about when state == State.about: {
+            menu.visible: false;
+            about.visible: true;
+            vnest.visible: false;
+        }
+        vnest when state == State.vnest: {
+            menu.visible: false;
+            about.visible: false;
+            vnest.visible: true;
+        }
+    ]
+
+    menu := MainMenu {
+        state <=> state;
+    }
+
+    about := AboutPage {
+        state <=> state;
+    }
+
+    vnest := VNeST {
+        app_state <=> state;
     }
 }

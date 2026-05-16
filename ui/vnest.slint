@@ -1,0 +1,37 @@
+import { StyleMetrics } from "std-widgets.slint";
+
+component TextBox {
+    in property <string> text;
+    in property <length> font-size;
+    in property <brush> background;
+    in property <color> color;
+    in property <int> font-weight;
+
+    width: rect.width;
+
+    rect := Rectangle {
+        background: background;
+        border-color: background.darker(50%);
+        border-width: 2px;
+        width: text_e.width + StyleMetrics.layout-padding * 2;
+        text_e := Text {
+            text: text;
+            font-size: font-size;
+            font-weight: font-weight;
+            color: color;
+        }
+    }
+}
+
+component InputBox {
+    in-out property <string> text;
+
+    TextInput {
+        input-type: InputType.text;
+        text <=> text;
+    }
+}
+
+export component VNeSTMain inherits Rectangle {
+    in-out property <int> stage;
+}
