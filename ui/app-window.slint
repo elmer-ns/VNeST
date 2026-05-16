@@ -100,55 +100,15 @@ component VNeST inherits Rectangle {
     }
 }
 
-export component Test inherits Window {
-    property <State> state;
-
-    title: "VNeST-S";
-
-    state: State.menu;
-
-    default-font-family: "Space Mono";
-    default-font-size: 24px;
-
-    states [
-        menu when state == State.menu: {
-            menu.visible: true;
-            about.visible: false;
-            vnest.visible: false;
-        }
-        about when state == State.about: {
-            menu.visible: false;
-            about.visible: true;
-            vnest.visible: false;
-        }
-        vnest when state == State.vnest: {
-            menu.visible: false;
-            about.visible: false;
-            vnest.visible: true;
-        }
-    ]
-
-    menu := MainMenu {
-        state <=> state;
-    }
-
-    about := AboutPage {
-        state <=> state;
-    }
-
-    vnest := VNeST {
-        app_state <=> state;
-    }
-}
-
 export component AppWindow inherits Window {
-    state: State.vnest;
+    property <State> state;
+
     title: "VNeST-S";
+
+    state: State.vnest;
 
     default-font-family: "Space Mono";
     default-font-size: 24px;
-
-    property <State> state;
 
     states [
         menu when state == State.menu: {
