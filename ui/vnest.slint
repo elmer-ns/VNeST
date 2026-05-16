@@ -7,13 +7,12 @@ component TextBox {
     in property <color> color;
     in property <int> font-weight;
 
-    width: rect.width;
-
     rect := Rectangle {
         background: background;
         border-color: background.darker(50%);
         border-width: 2px;
-        width: text_e.width + StyleMetrics.layout-padding * 2;
+        min-width: text_e.width + StyleMetrics.layout-padding * 2;
+        min-height: text_e.height + StyleMetrics.layout-padding * 2;
         text_e := Text {
             text: text;
             font-size: font-size;
@@ -23,15 +22,82 @@ component TextBox {
     }
 }
 
-component InputBox {
+component WordInput {
     in-out property <string> text;
+    in property <length> font-size;
+    in property <brush> background;
+    in property <color> color;
+    in property <int> font-weight;
 
-    TextInput {
-        input-type: InputType.text;
-        text <=> text;
+    out property <bool> has-focus: input.has-focus;
+
+    rect := Rectangle {
+        background: background;
+        border-color: background.darker(50%);
+        border-width: 2px;
+
+        input := TextInput {
+            text: text;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+            font-size: font-size;
+            color: color;
+            single-line: true;
+        }
     }
 }
 
 export component VNeSTMain inherits Rectangle {
     in-out property <int> stage;
+
+    property <string> verb: "";
+
+    VerticalLayout {
+        Rectangle {
+            vertical-stretch: 1;
+        }
+
+        HorizontalLayout {
+            alignment: center;
+
+            spacing: 50px;
+
+            TextBox {
+                preferred-width: root.width * 0.15;
+                preferred-height: root.height * 0.125;
+
+                text: "Vem";
+                font-size: 32px;
+                font-weight: 600;
+                color: black;
+                background: lightblue;
+            }
+
+            WordInput {
+                preferred-width: root.width * 0.15;
+                preferred-height: root.height * 0.125;
+
+                text <=> verb;
+                font-size: 32px;
+                font-weight: 600;
+                color: black;
+                background: orangered;
+            }
+
+            TextBox {
+                preferred-width: root.width * 0.15;
+                preferred-height: root.height * 0.125;
+
+                text: "Vad";
+                font-size: 32px;
+                font-weight: 600;
+                color: black;
+                background: lightgreen;
+            }
+        }
+
+        Rectangle {
+            vertical-stretch: 1;
+        }
+    }
 }
