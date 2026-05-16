@@ -1,51 +1,5 @@
 import { StyleMetrics } from "std-widgets.slint";
-
-component TextBox {
-    in property <string> text;
-    in property <length> font-size;
-    in property <brush> background;
-    in property <color> color;
-    in property <int> font-weight;
-
-    rect := Rectangle {
-        background: background;
-        border-color: background.darker(50%);
-        border-width: 2px;
-        min-width: text_e.width + StyleMetrics.layout-padding * 2;
-        min-height: text_e.height + StyleMetrics.layout-padding * 2;
-        text_e := Text {
-            text: text;
-            font-size: font-size;
-            font-weight: font-weight;
-            color: color;
-        }
-    }
-}
-
-component WordInput {
-    in-out property <string> text;
-    in property <length> font-size;
-    in property <brush> background;
-    in property <color> color;
-    in property <int> font-weight;
-
-    out property <bool> has-focus: input.has-focus;
-
-    rect := Rectangle {
-        background: background;
-        border-color: background.darker(50%);
-        border-width: 2px;
-
-        input := TextInput {
-            text: text;
-            horizontal-alignment: center;
-            vertical-alignment: center;
-            font-size: font-size;
-            color: color;
-            single-line: true;
-        }
-    }
-}
+import { TextBox, WordInput } from "text_box.slint";
 
 export component VNeSTMain inherits Rectangle {
     in-out property <int> stage;
@@ -66,8 +20,11 @@ export component VNeSTMain inherits Rectangle {
                 preferred-width: root.width * 0.15;
                 preferred-height: root.height * 0.125;
 
+                border-radius: 5px;
+                border-width: 2px;
+
                 text: "Vem";
-                font-size: 32px;
+                font-size: 24px;
                 font-weight: 600;
                 color: black;
                 background: lightblue;
@@ -77,8 +34,11 @@ export component VNeSTMain inherits Rectangle {
                 preferred-width: root.width * 0.15;
                 preferred-height: root.height * 0.125;
 
+                border-radius: 5px;
+                border-width: 2px;
+
                 text <=> verb;
-                font-size: 32px;
+                font-size: 24px;
                 font-weight: 600;
                 color: black;
                 background: orangered;
@@ -88,8 +48,11 @@ export component VNeSTMain inherits Rectangle {
                 preferred-width: root.width * 0.15;
                 preferred-height: root.height * 0.125;
 
+                border-radius: 5px;
+                border-width: 2px;
+
                 text: "Vad";
-                font-size: 32px;
+                font-size: 24px;
                 font-weight: 600;
                 color: black;
                 background: lightgreen;

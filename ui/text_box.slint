@@ -1,73 +1,55 @@
-export global ValidateString {
-    callback limit_size(string, length, length) -> length;
-}
+import { StyleMetrics } from "std-widgets.slint";
 
 export component TextBox {
-    in property <length> border-width;
-    in property <color> border-color;
-
-    in property <length> font-size;
     in property <string> text;
-    in property <color> text-color;
+    in property <length> font-size;
+    in property <brush> background;
+    in property <color> color;
+    in property <int> font-weight;
+    in property <length> border-radius;
+    in property <length> border-width;
 
-    public function update-font-size() {
-        t1.font-size = ValidateString.limit_size(t1.text, r1.width, font-size);
-        debug("Weeee");
-    }
-
-    r1 := Rectangle {
-        border-color: border-color;
+    rect := Rectangle {
+        background: background;
+        border-color: background.darker(50%);
         border-width: border-width;
-
-        t1 := Text {
-            color: text-color;
+        border-radius: border-radius;
+        min-width: text_e.width + StyleMetrics.layout-padding * 2;
+        min-height: text_e.height + StyleMetrics.layout-padding * 2;
+        text_e := Text {
             text: text;
             font-size: font-size;
-            vertical-alignment: center;
-            horizontal-alignment: center;
+            font-weight: font-weight;
+            color: color;
         }
     }
 }
 
-export component TextInputBox {
-    in property <length> border-width;
-    in property <color> border-color;
-
-    in property <length> font-size;
+export component WordInput {
     in-out property <string> text;
-    in property <color> text-color;
+    in property <length> font-size;
+    in property <brush> background;
+    in property <color> color;
+    in property <int> font-weight;
+    in property <length> border-radius;
+    in property <length> border-width;
 
-    callback accepted();
-    callback edited();
+    out property <bool> has-focus: input.has-focus;
 
-    callback update();
-
-    public function update-font-size() {
-        t1.font-size = ValidateString.limit_size(t1.text, t1.width, font-size);
-    }
-
-    forward-focus: t1;
-
-    Rectangle {
-        border-color: border-color;
+    rect := Rectangle {
+        background: background;
+        border-color: background.darker(50%);
         border-width: border-width;
+        border-radius: border-radius;
 
-        t1 := TextInput {
-            color: text-color;
-            text: text;
-            font-size: font-size;
-            vertical-alignment: center;
+        input := TextInput {
+            text <=> text;
             horizontal-alignment: center;
-
-            accepted => {
-                accepted();
-                update()
-            }
-            edited => {
-                text = self.text;
-                edited();
-                update()
-            }
+            vertical-alignment: center;
+            font-size: font-size;
+            font-weight: font-weight;
+            color: color;
+            single-line: true;
         }
     }
 }
