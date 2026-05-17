@@ -66,13 +66,7 @@ export component LineInput inherits Rectangle {
             property <length> offset;
 
             cursor-position-changed(position) => {
-                let d = min((root.width - margin_left - margin_right - 1rem) - position.x, 0);
-
-                let a = position.x;
-
-                offset = d;
-
-                debug(d);
+                offset = min((root.width - margin_left - margin_right - 1rem) - position.x, 0);
             }
         }
     }
