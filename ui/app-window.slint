@@ -94,6 +94,17 @@ component VNeST inherits Rectangle {
         y: parent.height - self.height - 20px;
     }
 
+    Button {
+        text: "Nästa";
+        clicked => {
+            stage += 1;
+            debug("Next")
+        }
+
+        x: parent.width - self.width - 20px;
+        y: parent.height - self.height - 20px;
+    }
+
     VNeSTMain {
         stage <=> stage;
     }

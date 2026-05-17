@@ -1,68 +1,282 @@
 import { StyleMetrics, HorizontalBox } from "std-widgets.slint";
 import { TextBox, LineInput } from "text_box.slint";
 
+component SubjectVerbObject {
+    in-out property <string> subject-text <=> subject.text;
+    in-out property <string> verb-text <=> verb.text;
+    in-out property <string> object-text <=> object.text;
+
+    in property <bool> subject-visible: true;
+    in property <bool> verb-visible: true;
+    in property <bool> object-visible: true;
+
+    in property <bool> subject-enabled: true;
+    in property <bool> verb-enabled: true;
+    in property <bool> object-enabled: true;
+
+    in property <bool> subject-read-only: false;
+    in property <bool> verb-read-only: false;
+    in property <bool> object-read-only: false;
+
+    in property <brush> subject-background;
+    in property <brush> verb-background;
+    in property <brush> object-background;
+
+    in property <length> border-width;
+    in property <length> border-radius;
+
+    in property <brush> subject-border-color: subject-background.darker(50%);
+    in property <brush> verb-border-color: verb-background.darker(50%);
+    in property <brush> object-border-color: object-background.darker(50%);
+
+    in property <length> font-size;
+    in property <int> font-weight;
+    in property <color> text-color;
+
+    in property <length> box-width;
+    in property <length> spacing <=> layout.spacing;
+
+    in property <TextHorizontalAlignment> horizontal_alignment;
+    in property <TextVerticalAlignment> vertical_alignment;
+
+    layout := HorizontalLayout {
+        spacing: 50px;
+
+        subject := LineInput {
+            visible: subject-visible;
+
+            text-color: root.text-color;
+            font-size: root.font-size;
+            font-weight: root.font-weight;
+
+            enabled: subject-enabled;
+            read_only: subject-read-only;
+
+            width: box-width;
+
+            background: subject-background;
+
+            border-width: root.border-width;
+            border-radius: root.border-radius;
+            border-color: subject-border-color;
+
+            horizontal_alignment: root.horizontal_alignment;
+            vertical_alignment: root.vertical_alignment;
+        }
+
+        verb := LineInput {
+            visible: verb-visible;
+
+            text-color: root.text-color;
+            font-size: root.font-size;
+            font-weight: root.font-weight;
+
+            enabled: verb-enabled;
+            read_only: verb-read-only;
+
+            width: box-width;
+
+            background: verb-background;
+
+            border-width: root.border-width;
+            border-radius: root.border-radius;
+            border-color: verb-border-color;
+
+            horizontal_alignment: root.horizontal_alignment;
+            vertical_alignment: root.vertical_alignment;
+        }
+
+        object := LineInput {
+            visible: object-visible;
+
+            text-color: root.text-color;
+            font-size: root.font-size;
+            font-weight: root.font-weight;
+
+            enabled: object-enabled;
+            read_only: object-read-only;
+
+            width: box-width;
+
+            background: object-background;
+
+            border-width: root.border-width;
+            border-radius: root.border-radius;
+            border-color: object-border-color;
+
+            horizontal_alignment: root.horizontal_alignment;
+            vertical_alignment: root.vertical_alignment;
+        }
+    }
+}
+
 export component VNeSTMain inherits Rectangle {
     in-out property <int> stage;
 
     property <string> verb: "";
 
+    private property <bool> verb_input_visible: stage >= 1;
+    private property <bool> verb_input_edit: stage == 1;
+
+    private property <bool> verb_exta_visible: false;
+
+    private property <bool> subject_edit: Math.mod(stage, 2) == 0;
+    private property <bool> object_edit: !subject_edit;
+
+    private property <int> line_n: (stage) / 2;
+    private property <int> column_n: Math.mod((stage), 2);
+
+    Text {
+        y: 10px;
+        x: 20px;
+        text: stage + 1;
+    }
+
+    Text {
+        y: 40px;
+        x: 20px;
+        text: line_n;
+    }
+
     VerticalLayout {
+        padding: 15px;
+        spacing: 10px;
+
         Rectangle {
             vertical-stretch: 1;
         }
 
-        HorizontalLayout {
-            alignment: center;
+        svo0 := SubjectVerbObject {
+            subject-text: "Vem";
+            object-text: "Vad";
+
+            text-color: black;
+            font-size: 24px;
+            font-weight: 600;
+
+            height: 75px;
+            box-width: 250px;
+
             spacing: 50px;
 
-            TextBox {
-                width: 250px;
-                height: 100px;
+            border-radius: 5px;
+            border-width: 2px;
 
-                border-radius: 5px;
-                border-width: 2px;
+            subject-background: lightblue;
+            verb-background: orangered;
+            object-background: lightgreen;
 
-                text: "Vem";
-                font-size: 24px;
-                font-weight: 600;
-                text-color: black;
-                background: lightblue;
-            }
+            verb-visible: verb_input_visible;
 
-            verb_input := LineInput {
-                width: 250px;
-                height: 100px;
+            subject-read-only: true;
+            verb-read-only: !verb_input_edit;
+            object-read-only: true;
 
-                border-radius: 5px;
-                border-width: 2px;
-
-                text: "";
-                font-size: 24px;
-                font-weight: 600;
-                text-color: black;
-                background: lightblue;
-
-                horizontal_alignment: center;
-            }
-
-            TextBox {
-                preferred-width: 250px;
-                preferred-height: 100px;
-
-                border-radius: 5px;
-                border-width: 2px;
-
-                text: "Vad";
-                font-size: 24px;
-                font-weight: 600;
-                text-color: black;
-                background: lightgreen;
-            }
+            horizontal_alignment: center;
+            vertical_alignment: center;
         }
 
-        HorizontalBox {
-            alignment: center;
+        Rectangle {
+            height: 10px;
+        }
+
+        svo1 := SubjectVerbObject {
+            visible: line_n >= 1;
+
+            text-color: black;
+            font-size: 24px;
+            font-weight: 600;
+
+            height: 75px;
+            box-width: 250px;
+
             spacing: 50px;
+
+            border-radius: 5px;
+            border-width: 2px;
+
+            verb-background: orangered;
+
+            subject-border-color: lightblue;
+            object-border-color: lightgreen;
+
+            verb-visible: verb_exta_visible;
+            object-visible: line_n > 1 || column_n == 1;
+
+            subject-read-only: self.object_visible;
+            verb-read-only: true;
+            object-read-only: line_n > 1;
+
+            verb-text: svo0.verb-text;
+
+            horizontal_alignment: center;
+            vertical_alignment: center;
+        }
+
+        svo2 := SubjectVerbObject {
+            visible: line_n >= 2;
+
+            text-color: black;
+            font-size: 24px;
+            font-weight: 600;
+
+            height: 75px;
+            box-width: 250px;
+
+            spacing: 50px;
+
+            border-radius: 5px;
+            border-width: 2px;
+
+            verb-background: orangered;
+
+            subject-border-color: lightblue;
+            object-border-color: lightgreen;
+
+            verb-visible: verb_exta_visible;
+            object-visible: line_n > 2 || column_n == 1;
+
+            subject-read-only: self.object_visible;
+            verb-read-only: true;
+            object-read-only: line_n > 2;
+
+            verb-text: svo0.verb-text;
+
+            horizontal_alignment: center;
+            vertical_alignment: center;
+        }
+
+        svo3 := SubjectVerbObject {
+            visible: line_n >= 3;
+
+            text-color: black;
+            font-size: 24px;
+            font-weight: 600;
+
+            height: 75px;
+            box-width: 250px;
+
+            spacing: 50px;
+
+            border-radius: 5px;
+            border-width: 2px;
+
+            verb-background: orangered;
+
+            subject-border-color: lightblue;
+            object-border-color: lightgreen;
+
+            verb-visible: verb_exta_visible;
+            object-visible: line_n > 3 || column_n == 1;
+            object-read-only: line_n > 3;
+
+            subject-read-only: self.object_visible;
+            verb-read-only: true;
+
+            verb-text: svo0.verb-text;
+
+            horizontal_alignment: center;
+            vertical_alignment: center;
         }
 
         Rectangle {

@@ -44,12 +44,17 @@ export component LineInput inherits Rectangle {
     in property <TextHorizontalAlignment> horizontal_alignment: start;
     in property <TextVerticalAlignment> vertical_alignment: center;
 
+    in property <bool> enabled <=> input.enabled;
+    in property <bool> read_only <=> input.read-only;
+
+    forward-focus: input;
+
     border-color: self.background.darker(50%);
 
     Rectangle {
         clip: true;
 
-        width: parent.width - margin_left - input.x - margin_right + 10px;
+        width: parent.width - margin_left - input.x - margin_right;
         x: margin_left;
 
         input := TextInput {
@@ -61,7 +66,7 @@ export component LineInput inherits Rectangle {
             horizontal-alignment: horizontal_alignment;
             vertical-alignment: vertical_alignment;
 
-            x: 5px + offset;
+            x: offset;
 
             property <length> offset;
 
