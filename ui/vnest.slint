@@ -1,5 +1,5 @@
 import { StyleMetrics, HorizontalBox } from "std-widgets.slint";
-import { TextBox, WordInput, Koker } from "text_box.slint";
+import { TextBox, LineInput } from "text_box.slint";
 
 export component VNeSTMain inherits Rectangle {
     in-out property <int> stage;
@@ -16,8 +16,8 @@ export component VNeSTMain inherits Rectangle {
             spacing: 50px;
 
             TextBox {
-                preferred-width: 250px;
-                preferred-height: 100px;
+                width: 250px;
+                height: 100px;
 
                 border-radius: 5px;
                 border-width: 2px;
@@ -25,21 +25,22 @@ export component VNeSTMain inherits Rectangle {
                 text: "Vem";
                 font-size: 24px;
                 font-weight: 600;
-                color: black;
+                text-color: black;
                 background: lightblue;
             }
 
-            verb_input := Koker {
-                preferred-width: 250px;
-                preferred-height: 100px;
+            verb_input := LineInput {
+                width: 250px;
+                height: 100px;
 
                 border-radius: 5px;
                 border-width: 2px;
 
-                text <=> verb;
+                text: "Vemxxxxxxxxioheoihgoihioh";
                 font-size: 24px;
                 font-weight: 600;
                 text-color: black;
+                background: lightblue;
             }
 
             TextBox {
@@ -52,7 +53,7 @@ export component VNeSTMain inherits Rectangle {
                 text: "Vad";
                 font-size: 24px;
                 font-weight: 600;
-                color: black;
+                text-color: black;
                 background: lightgreen;
             }
         }
@@ -60,48 +61,6 @@ export component VNeSTMain inherits Rectangle {
         HorizontalBox {
             alignment: center;
             spacing: 50px;
-
-            WordInput {
-                preferred-width: 250px;
-                preferred-height: 75px;
-
-                border-radius: 5px;
-                border-width: 2px;
-
-                text: "";
-                font-size: 24px;
-                font-weight: 600;
-                color: black;
-                background: gray;
-            }
-
-            TextBox {
-                preferred-width: 250px;
-                preferred-height: 75px;
-
-                border-radius: 5px;
-                border-width: 2px;
-
-                text: verb;
-                font-size: 24px;
-                font-weight: 600;
-                color: black;
-                background: orangered;
-            }
-
-            WordInput {
-                preferred-width: 250px;
-                preferred-height: 75px;
-
-                border-radius: 5px;
-                border-width: 2px;
-
-                text: "";
-                font-size: 24px;
-                font-weight: 600;
-                color: black;
-                background: gray;
-            }
         }
 
         Rectangle {

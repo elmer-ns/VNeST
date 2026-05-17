@@ -1,26 +1,79 @@
 import { StyleMetrics } from "std-widgets.slint";
 
-export component TextBox {
+export component TextBox inherits Rectangle {
     in property <string> text;
     in property <length> font-size;
-    in property <brush> background;
-    in property <color> color;
+    in property <color> text-color;
     in property <int> font-weight;
-    in property <length> border-radius;
-    in property <length> border-width;
 
-    rect := Rectangle {
-        background: background;
-        border-color: background.darker(50%);
-        border-width: border-width;
-        border-radius: border-radius;
-        min-width: text_e.width + StyleMetrics.layout-padding * 2;
-        min-height: text_e.height + StyleMetrics.layout-padding * 2;
-        text_e := Text {
-            text: text;
+    in property <length> margin_left;
+    in property <length> margin_right;
+
+    in property <TextOverflow> overflow;
+    in property <TextHorizontalAlignment> horizontal_alignment: center;
+    in property <TextVerticalAlignment> vertical_alignment: center;
+
+    border-color: self.background.darker(50%);
+
+    text_e := Text {
+        text: text;
+        font-size: font-size;
+        font-weight: font-weight;
+        color: text-color;
+
+        width: parent.width - margin_left - margin_right;
+        height: parent.height;
+
+        horizontal-alignment: horizontal_alignment;
+        vertical-alignment: vertical_alignment;
+
+        overflow: overflow;
+    }
+}
+
+export component LineInput inherits Rectangle {
+    in-out property <string> text;
+    in property <length> font-size;
+    in property <color> text-color;
+    in property <int> font-weight;
+
+    in property <length> margin_left: 1rem;
+    in property <length> margin_right: 1rem;
+
+    in property <TextOverflow> overflow;
+    in property <TextHorizontalAlignment> horizontal_alignment: start;
+    in property <TextVerticalAlignment> vertical_alignment: center;
+
+    border-color: self.background.darker(50%);
+
+    Rectangle {
+        clip: true;
+
+        width: parent.width - margin_left - input.x - margin_right + 10px;
+        x: margin_left;
+
+        input := TextInput {
+            text <=> text;
             font-size: font-size;
             font-weight: font-weight;
-            color: color;
+            color: text-color;
+
+            horizontal-alignment: horizontal_alignment;
+            vertical-alignment: vertical_alignment;
+
+            x: 5px + offset;
+
+            property <length> offset;
+
+            cursor-position-changed(position) => {
+                let d = min((root.width - margin_left - margin_right - 1rem) - position.x, 0);
+
+                let a = position.x;
+
+                offset = d;
+
+                debug(d);
+            }
         }
     }
 }
@@ -231,53 +284,6 @@ export component Koker2 {
             text-color: black;
             enabled: root.enabled;
             margin: 35px;
-        }
-    }
-}
-
-export component WordInput {
-    in-out property <string> text;
-    in property <length> font-size;
-    in property <brush> background;
-    in property <color> color;
-    in property <int> font-weight;
-    in property <length> border-radius;
-    in property <length> border-width;
-
-    out property <bool> has-focus: input.has-focus;
-
-    rect := Rectangle {
-        background: background;
-        border-color: background.darker(50%);
-        border-width: border-width;
-        border-radius: border-radius;
-
-        min-width: 1px;
-        min-height: input.preferred-height;
-        clip: true;
-        forward-focus: input;
-
-        input := TextInput {
-            text <=> text;
-            font-size: root.font-size;
-            font-weight: root.font-weight;
-
-            property <length> computed-x;
-            x: min(0px, max(parent.width - self.width - self.text-cursor-width, self.computed-x));
-            width: max(parent.width - self.text-cursor-width, self.preferred-width);
-            height: 100%;
-            vertical-alignment: center;
-            single-line: true;
-            color: root.color;
-
-            private property <length> margin: 5rem;
-            cursor-position-changed(cursor-position) => {
-                if cursor-position.x + self.computed_x < margin {
-                    self.computed_x = - cursor-position.x + margin;
-                } else if cursor-position.x + self.computed_x > parent.width - margin - self.text-cursor-width {
-                    self.computed_x = parent.width - cursor-position.x - margin - self.text-cursor-width;
-                }
-            }
         }
     }
 }
