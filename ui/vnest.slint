@@ -1,5 +1,5 @@
-import { StyleMetrics } from "std-widgets.slint";
-import { TextBox, WordInput } from "text_box.slint";
+import { StyleMetrics, HorizontalBox } from "std-widgets.slint";
+import { TextBox, WordInput, Koker } from "text_box.slint";
 
 export component VNeSTMain inherits Rectangle {
     in-out property <int> stage;
@@ -13,7 +13,6 @@ export component VNeSTMain inherits Rectangle {
 
         HorizontalLayout {
             alignment: center;
-
             spacing: 50px;
 
             TextBox {
@@ -30,7 +29,7 @@ export component VNeSTMain inherits Rectangle {
                 background: lightblue;
             }
 
-            verb_input := WordInput {
+            verb_input := Koker {
                 preferred-width: 250px;
                 preferred-height: 100px;
 
@@ -40,8 +39,7 @@ export component VNeSTMain inherits Rectangle {
                 text <=> verb;
                 font-size: 24px;
                 font-weight: 600;
-                color: black;
-                background: orangered;
+                text-color: black;
             }
 
             TextBox {
@@ -56,6 +54,53 @@ export component VNeSTMain inherits Rectangle {
                 font-weight: 600;
                 color: black;
                 background: lightgreen;
+            }
+        }
+
+        HorizontalBox {
+            alignment: center;
+            spacing: 50px;
+
+            WordInput {
+                preferred-width: 250px;
+                preferred-height: 75px;
+
+                border-radius: 5px;
+                border-width: 2px;
+
+                text: "";
+                font-size: 24px;
+                font-weight: 600;
+                color: black;
+                background: gray;
+            }
+
+            TextBox {
+                preferred-width: 250px;
+                preferred-height: 75px;
+
+                border-radius: 5px;
+                border-width: 2px;
+
+                text: verb;
+                font-size: 24px;
+                font-weight: 600;
+                color: black;
+                background: orangered;
+            }
+
+            WordInput {
+                preferred-width: 250px;
+                preferred-height: 75px;
+
+                border-radius: 5px;
+                border-width: 2px;
+
+                text: "";
+                font-size: 24px;
+                font-weight: 600;
+                color: black;
+                background: gray;
             }
         }
 
