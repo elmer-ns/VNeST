@@ -5,7 +5,7 @@ import "fonts/SpaceMono/SpaceMono-Bold.ttf";
 import "fonts/SpaceMono/SpaceMono-BoldItalic.ttf";
 import "fonts/SpaceMono/SpaceMono-Italic.ttf";
 import { Button } from "std-widgets.slint";
-import { VNeSTMain } from "vnest.slint";
+import { VNeSTMain, BasicPhraseStage } from "vnest.slint";
 
 export enum State {menu, about, vnest}
 
@@ -68,7 +68,6 @@ component AboutPage inherits Rectangle {
         text: "Tillbaka";
         clicked => {
             state = State.menu;
-            debug("Back")
         }
 
         x: 20px;
@@ -76,37 +75,59 @@ component AboutPage inherits Rectangle {
     }
 }
 
+enum VNeSTState {basic_phrase}
+
 component VNeST inherits Rectangle {
     in-out property <State> app_state;
-    property <int> stage: 0;
+    property <VNeSTState> state: VNeSTState.basic_phrase;
 
-    Button {
-        text: "Tillbaka";
-        clicked => {
-            if (stage == 0) {
+    VerticalLayout {
+        basic_phrase := BasicPhraseStage {
+            visible: false;
+
+            exit => {
                 app_state = State.menu;
-            } else {
-                stage -= 1;
+                basic_phrase.reset();
             }
         }
 
-        x: 20px;
-        y: parent.height - self.height - 20px;
-    }
+        states [
+            basic_phrase when state == VNeSTState.basic-phrase: {
+                basic_phrase.visible: true;
+            }
+        ]
 
-    Button {
-        text: "Nästa";
-        clicked => {
-            stage += 1;
-            debug("Next")
+        function next() {
+            if state == VNeSTState.basic-phrase {
+                basic_phrase.next()
+            }
+        }
+        function back() {
+            if state == VNeSTState.basic-phrase {
+                basic_phrase.back()
+            }
         }
 
-        x: parent.width - self.width - 20px;
-        y: parent.height - self.height - 20px;
-    }
+        HorizontalLayout {
+            alignment: space-between;
+            padding: 15px;
+            Button {
+                text: "Tillbaka";
+                clicked => {
+                    back()
+                }
+                y: parent.height - self.height - 20px;
+            }
 
-    VNeSTMain {
-        stage <=> stage;
+            Button {
+                text: "Nästa";
+                clicked => {
+                    next()
+                }
+
+                y: parent.height - self.height - 20px;
+            }
+        }
     }
 }
 

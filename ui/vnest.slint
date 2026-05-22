@@ -6,6 +6,20 @@ component SubjectVerbObject {
     in-out property <string> verb-text <=> verb.text;
     in-out property <string> object-text <=> object.text;
 
+    callback subject_accepted();
+    callback verb_accepted();
+    callback object_accepted();
+
+    public function focus_subject() {
+        subject.focus()
+    }
+    public function focus_verb() {
+        verb.focus()
+    }
+    public function focus_object() {
+        object.focus()
+    }
+
     in property <bool> subject-visible: true;
     in property <bool> verb-visible: true;
     in property <bool> object-visible: true;
@@ -62,6 +76,10 @@ component SubjectVerbObject {
 
             horizontal_alignment: root.horizontal_alignment;
             vertical_alignment: root.vertical_alignment;
+
+            accepted => {
+                subject_accepted()
+            }
         }
 
         verb := LineInput {
@@ -84,6 +102,10 @@ component SubjectVerbObject {
 
             horizontal_alignment: root.horizontal_alignment;
             vertical_alignment: root.vertical_alignment;
+
+            accepted => {
+                verb_accepted()
+            }
         }
 
         object := LineInput {
@@ -106,12 +128,67 @@ component SubjectVerbObject {
 
             horizontal_alignment: root.horizontal_alignment;
             vertical_alignment: root.vertical_alignment;
+
+            accepted => {
+                object_accepted()
+            }
         }
     }
 }
 
+export component BasicPhraseStage inherits Rectangle {
+    property <int> stage: 0;
+
+    out property <string> subject: "";
+    out property <string> verb: "";
+    out property <string> object: "";
+
+    public function next() {
+        stage += 1;
+    }
+    public function back() {
+        stage -= 1;
+
+        if stage == -1 {
+            exit();
+        }
+    }
+
+    public function reset() {
+        stage = 0;
+        subject = "";
+        verb = "";
+        object = "";
+    }
+
+    main := VerticalLayout {
+        Text {
+            text: stage;
+        }
+
+        Text {
+            text: "a";
+        }
+
+        Text {
+            text: "a";
+        }
+    }
+
+    callback done();
+    callback exit();
+}
+
+export component ExpandPhraseStage inherits Rectangle {
+    in property <string> subject: "";
+    in property <string> verb: "";
+    in property <string> object: "";
+
+    callback done();
+}
+
 export component VNeSTMain inherits Rectangle {
-    in-out property <int> stage;
+    property <int> stage: 0;
 
     property <string> verb: "";
 
@@ -125,6 +202,48 @@ export component VNeSTMain inherits Rectangle {
 
     private property <int> line_n: (stage) / 2;
     private property <int> column_n: Math.mod((stage), 2);
+
+    function reset() {
+        verb = "";
+
+        svo1.subject-text = "";
+        svo1.object-text = "";
+
+        svo2.subject-text = "";
+        svo2.object-text = "";
+
+        svo3.subject-text = "";
+        svo3.object-text = "";
+    }
+
+    function update_focus() {
+        if line_n <= 0 {
+            svo0.focus_verb()
+        }
+        if line_n == 1 {
+            if column_n == 0 {
+            }
+        }
+    }
+
+    public function next() -> bool {
+        stage += 1;
+
+        update_focus();
+
+        false
+    }
+
+    public function back() -> bool {
+        stage -= 1;
+
+        update_focus();
+
+        if stage == -1 {
+            return true;
+        }
+        false
+    }
 
     Text {
         y: 10px;
@@ -201,11 +320,11 @@ export component VNeSTMain inherits Rectangle {
             object-border-color: lightgreen;
 
             verb-visible: verb_exta_visible;
-            object-visible: line_n > 1 || column_n == 1;
+            object-visible: line_n > 0;
 
-            subject-read-only: self.object_visible;
+            subject-read-only: line_n > 1 || column_n == 1;
             verb-read-only: true;
-            object-read-only: line_n > 1;
+            object-read-only: line_n > 1 || column_n == 0;
 
             verb-text: svo0.verb-text;
 
@@ -234,11 +353,11 @@ export component VNeSTMain inherits Rectangle {
             object-border-color: lightgreen;
 
             verb-visible: verb_exta_visible;
-            object-visible: line_n > 2 || column_n == 1;
+            object-visible: line_n > 1;
 
-            subject-read-only: self.object_visible;
+            subject-read-only: line_n > 2 || column_n == 1;
             verb-read-only: true;
-            object-read-only: line_n > 2;
+            object-read-only: line_n > 2 || column_n == 0;
 
             verb-text: svo0.verb-text;
 
@@ -267,11 +386,11 @@ export component VNeSTMain inherits Rectangle {
             object-border-color: lightgreen;
 
             verb-visible: verb_exta_visible;
-            object-visible: line_n > 3 || column_n == 1;
-            object-read-only: line_n > 3;
+            object-visible: line_n > 1;
 
-            subject-read-only: self.object_visible;
+            subject-read-only: line_n > 3 || column_n == 1;
             verb-read-only: true;
+            object-read-only: line_n > 3 || column_n == 0;
 
             verb-text: svo0.verb-text;
 

@@ -51,6 +51,8 @@ export component LineInput inherits Rectangle {
 
     border-color: self.background.darker(50%);
 
+    callback accepted();
+
     Rectangle {
         clip: true;
 
@@ -72,6 +74,10 @@ export component LineInput inherits Rectangle {
 
             cursor-position-changed(position) => {
                 offset = min((root.width - margin_left - margin_right - 1rem) - position.x, 0);
+            }
+
+            accepted => {
+                accepted()
             }
         }
     }
