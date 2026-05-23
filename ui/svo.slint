@@ -63,16 +63,18 @@ export component SubjectVerbObject {
     in property <color> text-color;
 
     in property <length> box-width;
-    in property <length> spacing <=> layout.spacing;
+    in property <length> spacing;
 
     in property <TextHorizontalAlignment> horizontal_alignment;
     in property <TextVerticalAlignment> vertical_alignment;
 
     layout := HorizontalLayout {
-        spacing: 50px;
+        spacing: spacing;
 
         subject := LineInput {
             visible: subject-visible;
+
+            horizontal-stretch: 1;
 
             text-color: root.text-color;
             font-size: root.font-size;
@@ -80,8 +82,6 @@ export component SubjectVerbObject {
 
             enabled: subject-enabled;
             read_only: subject-read-only;
-
-            width: box-width;
 
             background: subject-background;
 
@@ -100,14 +100,14 @@ export component SubjectVerbObject {
         verb := LineInput {
             visible: verb-visible;
 
+            horizontal-stretch: 1;
+
             text-color: root.text-color;
             font-size: root.font-size;
             font-weight: root.font-weight;
 
             enabled: verb-enabled;
             read_only: verb-read-only;
-
-            width: box-width;
 
             background: verb-background;
 
@@ -126,14 +126,14 @@ export component SubjectVerbObject {
         object := LineInput {
             visible: object-visible;
 
+            horizontal-stretch: 1;
+
             text-color: root.text-color;
             font-size: root.font-size;
             font-weight: root.font-weight;
 
             enabled: object-enabled;
             read_only: object-read-only;
-
-            width: box-width;
 
             background: object-background;
 

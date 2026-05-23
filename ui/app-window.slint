@@ -19,6 +19,8 @@ component MainMenu inherits Rectangle {
         alignment: center;
         spacing: 15px;
 
+        padding: 35px;
+
         Text {
             text: "Verb - Nätverksstärkande Träning (VNeST-S)";
             font-size: 32px;
@@ -34,12 +36,14 @@ component MainMenu inherits Rectangle {
 
         HorizontalLayout {
             alignment: center;
-            padding-top: 25px;
+            padding-top: 50px;
             width: 50%;
-            spacing: 50px;
+
+            spacing: 150px;
 
             Button {
                 text: "Starta";
+
                 primary: true;
 
                 clicked => {
@@ -74,7 +78,6 @@ component AboutPage inherits Rectangle {
                 text: "Om:";
                 horizontal-alignment: center;
                 font-weight: FontWeight.bold;
-                font-size: 1.25rem;
             }
 
             AboutSlint {
@@ -161,7 +164,7 @@ export component AppWindow inherits Window {
     }
 
     default-font-family: "Space Mono";
-    default-font-size: 24px;
+    default-font-size: 28px;
 
     function next() {
         if state == State.vnest {
@@ -209,18 +212,6 @@ export component AppWindow inherits Window {
             // RETURN -> next()
             if event.text == "\n" {
                 next();
-                return accept;
-            }
-
-            // FRONT_ARROW -> next()
-            if event.text == "" {
-                next();
-                return accept;
-            }
-
-            // BACK_ARROW -> back()
-            if event.text == "" {
-                back();
                 return accept;
             }
 
