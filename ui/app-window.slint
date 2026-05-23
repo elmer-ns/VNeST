@@ -4,7 +4,7 @@ import "fonts/SpaceMono/SpaceMono-Regular.ttf";
 import "fonts/SpaceMono/SpaceMono-Bold.ttf";
 import "fonts/SpaceMono/SpaceMono-BoldItalic.ttf";
 import "fonts/SpaceMono/SpaceMono-Italic.ttf";
-import { Button } from "std-widgets.slint";
+import { Button, AboutSlint } from "std-widgets.slint";
 import { BasicPhraseStage } from "vnest.slint";
 
 export enum State {menu, about, vnest}
@@ -63,6 +63,26 @@ component AboutPage inherits Rectangle {
     height: 100%;
 
     in-out property <State> state;
+
+    HorizontalLayout {
+        alignment: center;
+
+        VerticalLayout {
+            padding: 10px;
+
+            Text {
+                text: "Om:";
+                horizontal-alignment: center;
+                font-weight: FontWeight.bold;
+                font-size: 1.25rem;
+            }
+
+            AboutSlint {
+                height: 100px;
+                width: 100%;
+            }
+        }
+    }
 
     Button {
         text: "Tillbaka";
@@ -140,7 +160,7 @@ export component AppWindow inherits Window {
         self.focus()
     }
 
-    state: State.menu;
+    state: State.about;
 
     default-font-family: "Space Mono";
     default-font-size: 24px;
