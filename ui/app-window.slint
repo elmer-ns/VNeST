@@ -188,17 +188,26 @@ export component AppWindow inherits Window {
 
     scope := FocusScope {
         capture_key_pressed(event) => {
-            debug("press");
-
+            // RETURN -> next()
             if event.text == "\n" {
                 next();
                 return accept;
             }
+
+            // FRONT_ARROW -> next()
             if event.text == "" {
                 next();
                 return accept;
             }
+
+            // BACK_ARROW -> back()
             if event.text == "" {
+                back();
+                return accept;
+            }
+
+            //ESCAPE -> back()
+            if event.text == "" {
                 back();
                 return accept;
             }
