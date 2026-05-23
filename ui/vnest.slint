@@ -2,8 +2,6 @@ import { StyleMetrics, HorizontalBox } from "std-widgets.slint";
 import { TextBox, LineInput } from "text_box.slint";
 import { SubjectVerbObject } from "svo.slint";
 
-
-
 export component BasicPhraseStage inherits Rectangle {
     property <int> stage: 0;
 
@@ -11,12 +9,25 @@ export component BasicPhraseStage inherits Rectangle {
     out property <string> verb: "";
     out property <string> object: "";
 
+    out property <bool> can-next: read_verb_n != 5;
+
+    private property <[{ subject: string, object: string}]> subjects_objects: [{ subject: "", object: "" }, { subject: "", object: "" }, { subject: "", object: "" }];
+
     public function next() {
         stage += 1;
+
+        // workaround to avoid loosing focus when hiding last focused element in 1 specific case (might look for read fix eventually)
+        if read_verb_n == -1 {
+            focus.focus();
+        }
     }
     public function back() {
         stage -= 1;
 
+        // workaround to avoid loosing focus when hiding last focused element in 1 specific case (might look for read fix eventually)
+        if stage == 0 {
+            focus.focus();
+        }
         if stage == -1 {
             exit();
         }
@@ -36,103 +47,127 @@ export component BasicPhraseStage inherits Rectangle {
     private property <int> line_n: stage / 2;
     private property <int> column_n: Math.mod((stage), 2);
 
-    private property <[{ subject: string, object: string}]> lines: [{ subject: "", object: "" }, { subject: "", object: "" }, { subject: "", object: "" }];
+    private property <int> read_verb_n: stage - 9;
+    private property <bool> select_stage: read_verb_n > 3;
 
-    HorizontalLayout {
-        Rectangle {
-            horizontal-stretch: 1;
+    private property <brush> subject-color:  #DDEAF6;
+    private property <brush> verb-color:  #F4AF91;
+    private property <brush> object-color:  #E1EFD8;
+
+    private property <brush> subject-border: #BACDDD;
+    private property <brush> verb-border: #A56C46;
+    private property <brush> object-border: #BBC8B2;
+
+    focus := FocusScope {
+        phrases := HorizontalLayout {
+            visible: read_verb_n != -1 && read_verb_n != 4;
+            Rectangle {
+                horizontal-stretch: 1;
+            }
+
+            main := VerticalLayout {
+                padding: 35px;
+                spacing: 25px;
+                width: 100%;
+
+                Rectangle {
+                    vertical-stretch: 1;
+                }
+
+                head := SubjectVerbObject {
+                    subject-text: read_verb_n;
+                    object-text: "Vad";
+
+                    text-color: black;
+                    font-weight: 600;
+
+                    spacing: 50px;
+
+                    vertical-stretch: 1;
+                    min-height: 75px;
+
+                    border-radius: 5px;
+                    border-width: 2px;
+
+                    subject-background: subject-color;
+                    verb-background: verb-color;
+                    object-background: object-color;
+
+                    subject-border-color: subject-border;
+                    verb-border-color: verb-border;
+                    object-border-color: object-border;
+                    verb-visible: stage > 0 && read_verb_n <= 0;
+                    subject-read-only: true;
+
+                    verb-read-only: stage != 1;
+                    verb_focused: !self.verb-read-only;
+
+                    object-read-only: true;
+
+                    horizontal_alignment: center;
+                    vertical_alignment: center;
+                }
+
+                Rectangle {
+                    height: 10px;
+                }
+
+                for line[index] in subjects_objects: SubjectVerbObject {
+                    subject-text: line.subject;
+                    verb-text: head.verb-text;
+                    object-text: line.object;
+
+                    text-color: black;
+                    font-weight: 600;
+
+                    vertical-stretch: 1;
+                    min-height: 75px;
+
+                    spacing: 50px;
+
+                    border-radius: 5px;
+                    border-width: 2px;
+
+                    verb-background: verb-color;
+
+                    subject-border-color: subject-color;
+                    object-border-color: object-color;
+
+                    subject-visible: line_n > index;
+                    verb-visible: read_verb_n == index + 1 || select_stage;
+                    object-visible: line_n > index;
+
+                    subject-read-only: line_n > index + 1 || column_n == 1;
+                    verb-read-only: true;
+                    object-read-only: line_n > index + 1 || column_n == 0;
+
+                    subject_focused: self.subject_visible && !self.subject-read-only;
+                    object_focused: self.object_visible && !self.object-read-only;
+
+                    horizontal_alignment: center;
+                    vertical_alignment: center;
+                }
+
+                Rectangle {
+                    vertical-stretch: 1;
+                }
+            }
+
+            Rectangle {
+                horizontal-stretch: 1;
+            }
         }
 
-        main := VerticalLayout {
-            padding: 35px;
-            spacing: 25px;
-            width: 100%;
-
-            Rectangle {
-                vertical-stretch: 1;
-            }
-
-            head := SubjectVerbObject {
-                subject-text: "Vem";
-                object-text: "Vad";
-
-                text-color: black;
-                font-weight: 600;
-
-                spacing: 50px;
-
-                vertical-stretch: 1;
-                min-height: 75px;
-
-                border-radius: 5px;
-                border-width: 2px;
-
-                subject-background: lightblue;
-                verb-background: orangered;
-                object-background: lightgreen;
-
-                verb-visible: stage > 0;
-
-                subject-read-only: true;
-
-                verb-read-only: stage != 1;
-                verb_focused: !self.verb-read-only;
-
-                subject_focused: stage == 0;
-
-                object-read-only: true;
-
-                horizontal_alignment: center;
-                vertical_alignment: center;
-            }
-
-            Rectangle {
-                height: 10px;
-            }
-
-            for line[index] in lines: SubjectVerbObject {
-                subject-text: line.subject;
-                verb-text: head.verb-text;
-                object-text: line.object;
-
-                text-color: black;
-                font-weight: 600;
-
-                vertical-stretch: 1;
-                min-height: 75px;
-
-                spacing: 50px;
-
-                border-radius: 5px;
-                border-width: 2px;
-
-                verb-background: orangered;
-
-                subject-border-color: lightblue;
-                object-border-color: lightgreen;
-
-                subject-visible: line_n > index;
-                verb-visible: false;
-                object-visible: line_n > index;
-
-                subject-read-only: line_n > index + 1 || column_n == 1;
-                verb-read-only: true;
-                object-read-only: line_n > index + 1 || column_n == 0;
-
-                subject_focused: self.subject_visible && !self.subject-read-only;
-                object_focused: self.object_visible && !self.object-read-only;
-
-                horizontal_alignment: center;
-                vertical_alignment: center;
-            }
-
-            Rectangle {
-                vertical-stretch: 1;
-            }
+        Text {
+            visible: read_verb_n == -1;
+            text: "Steg 2: Läs meningarna högt";
+            font-weight: FontWeight.bold;
         }
 
-        Rectangle {
-            horizontal-stretch: 1;
+        Text {
+            visible: read_verb_n == 4;
+            text: "Steg 3: Utveckla en mening";
+            font-weight: FontWeight.bold;
         }
     }
 
@@ -140,7 +175,7 @@ export component BasicPhraseStage inherits Rectangle {
     callback exit();
 }
 
-    export component ExpandPhraseStage inherits Rectangle {
+export component ExpandPhraseStage inherits Rectangle {
     in property <string> subject: "";
     in property <string> verb: "";
     in property <string> object: "";
