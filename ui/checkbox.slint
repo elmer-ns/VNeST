@@ -1,0 +1,26 @@
+export component CheckBox inherits Rectangle {
+    in-out property <bool> checked: false;
+    width: 25px;
+    height: 25px;
+
+    border-radius: 5px;
+    border-width: 1px;
+
+    touch := TouchArea {
+        enabled: true;
+        clicked => {
+            checked = !checked
+        }
+
+        Image {
+            width: root.width;
+            height: root.height;
+            source: @image-url("assets/cross.svg");
+            image-fit: fill;
+
+            opacity: checked ? 1.0 : 0.0;
+
+            animate opacity { duration: 50ms; }
+        }
+    }
+}

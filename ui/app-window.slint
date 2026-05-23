@@ -1,11 +1,12 @@
 import "../NotoSans.ttf";
 
-import "fonts/SpaceMono/SpaceMono-Regular.ttf";
-import "fonts/SpaceMono/SpaceMono-Bold.ttf";
-import "fonts/SpaceMono/SpaceMono-BoldItalic.ttf";
-import "fonts/SpaceMono/SpaceMono-Italic.ttf";
+import "assets/fonts/SpaceMono/SpaceMono-Regular.ttf";
+import "assets/fonts/SpaceMono/SpaceMono-Bold.ttf";
+import "assets/fonts/SpaceMono/SpaceMono-BoldItalic.ttf";
+import "assets/fonts/SpaceMono/SpaceMono-Italic.ttf";
 import { Button, AboutSlint } from "std-widgets.slint";
 import { BasicPhraseStage } from "vnest.slint";
+import { CheckBox } from "checkbox.slint";
 
 export enum State {menu, about, vnest}
 
@@ -123,6 +124,7 @@ component VNeST inherits Rectangle {
     VerticalLayout {
         basic_phrase := BasicPhraseStage {
             visible: false;
+            vertical-stretch: 1;
 
             exit => {
                 app_state = State.menu;
@@ -135,10 +137,6 @@ component VNeST inherits Rectangle {
                 basic_phrase.visible: true;
             }
         ]
-
-        Rectangle {
-            vertical-stretch: 1;
-        }
 
         HorizontalLayout {
             alignment: space-between;
