@@ -1,0 +1,152 @@
+import { LineInput } from "text_box.slint";
+export component SubjectVerbObject {
+    in-out property <string> subject-text <=> subject.text;
+    in-out property <string> verb-text <=> verb.text;
+    in-out property <string> object-text <=> object.text;
+
+    in property <bool> subject_focused;
+    changed subject_focused => {
+        if subject_focused {
+            subject.focus();
+        } else if subject.has-focus {
+            //subject.clear-focus()
+        }
+    }
+
+    in property <bool> verb_focused;
+    changed verb_focused => {
+        if verb_focused {
+            verb.focus()
+        } else if verb.has_focus {
+            //verb.clear-focus()
+        }
+    }
+
+    in property <bool> object_focused;
+    changed object_focused => {
+        if object_focused {
+            object.focus();
+        } else if object.has-focus {
+            //object.clear-focus()
+        }
+    }
+
+    callback subject_accepted();
+    callback verb_accepted();
+    callback object_accepted();
+
+    in property <bool> subject-visible: true;
+    in property <bool> verb-visible: true;
+    in property <bool> object-visible: true;
+
+    in property <bool> subject-enabled: true;
+    in property <bool> verb-enabled: true;
+    in property <bool> object-enabled: true;
+
+    in property <bool> subject-read-only: false;
+    in property <bool> verb-read-only: false;
+    in property <bool> object-read-only: false;
+
+    in property <brush> subject-background;
+    in property <brush> verb-background;
+    in property <brush> object-background;
+
+    in property <length> border-width;
+    in property <length> border-radius;
+
+    in property <brush> subject-border-color: subject-background.darker(50%);
+    in property <brush> verb-border-color: verb-background.darker(50%);
+    in property <brush> object-border-color: object-background.darker(50%);
+
+    in property <length> font-size;
+    in property <int> font-weight;
+    in property <color> text-color;
+
+    in property <length> box-width;
+    in property <length> spacing <=> layout.spacing;
+
+    in property <TextHorizontalAlignment> horizontal_alignment;
+    in property <TextVerticalAlignment> vertical_alignment;
+
+    layout := HorizontalLayout {
+        spacing: 50px;
+
+        subject := LineInput {
+            visible: subject-visible;
+
+            text-color: root.text-color;
+            font-size: root.font-size;
+            font-weight: root.font-weight;
+
+            enabled: subject-enabled;
+            read_only: subject-read-only;
+
+            width: box-width;
+
+            background: subject-background;
+
+            border-width: root.border-width;
+            border-radius: root.border-radius;
+            border-color: subject-border-color;
+
+            horizontal_alignment: root.horizontal_alignment;
+            vertical_alignment: root.vertical_alignment;
+
+            accepted => {
+                subject_accepted()
+            }
+        }
+
+        verb := LineInput {
+            visible: verb-visible;
+
+            text-color: root.text-color;
+            font-size: root.font-size;
+            font-weight: root.font-weight;
+
+            enabled: verb-enabled;
+            read_only: verb-read-only;
+
+            width: box-width;
+
+            background: verb-background;
+
+            border-width: root.border-width;
+            border-radius: root.border-radius;
+            border-color: verb-border-color;
+
+            horizontal_alignment: root.horizontal_alignment;
+            vertical_alignment: root.vertical_alignment;
+
+            accepted => {
+                verb_accepted()
+            }
+        }
+
+        object := LineInput {
+            visible: object-visible;
+
+            text-color: root.text-color;
+            font-size: root.font-size;
+            font-weight: root.font-weight;
+
+            enabled: object-enabled;
+            read_only: object-read-only;
+
+            width: box-width;
+
+            background: object-background;
+
+            border-width: root.border-width;
+            border-radius: root.border-radius;
+            border-color: object-border-color;
+
+            horizontal_alignment: root.horizontal_alignment;
+            vertical_alignment: root.vertical_alignment;
+
+            accepted => {
+                object_accepted()
+            }
+        }
+    }
+}
