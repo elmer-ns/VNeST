@@ -152,15 +152,13 @@ component VNeST inherits Rectangle {
 }
 
 export component AppWindow inherits Window {
-    property <State> state;
+    property <State> state: State.menu;
 
     title: "VNeST-S";
 
     changed state => {
         self.focus()
     }
-
-    state: State.about;
 
     default-font-family: "Space Mono";
     default-font-size: 24px;
