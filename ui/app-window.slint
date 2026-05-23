@@ -5,7 +5,7 @@ import "fonts/SpaceMono/SpaceMono-Bold.ttf";
 import "fonts/SpaceMono/SpaceMono-BoldItalic.ttf";
 import "fonts/SpaceMono/SpaceMono-Italic.ttf";
 import { Button } from "std-widgets.slint";
-import { VNeSTMain, BasicPhraseStage } from "vnest.slint";
+import { BasicPhraseStage } from "vnest.slint";
 
 export enum State {menu, about, vnest}
 
@@ -81,6 +81,17 @@ component VNeST inherits Rectangle {
     in-out property <State> app_state;
     property <VNeSTState> state: VNeSTState.basic_phrase;
 
+    public function next() {
+        if state == VNeSTState.basic-phrase {
+            basic_phrase.next()
+        }
+    }
+    public function back() {
+        if state == VNeSTState.basic-phrase {
+            basic_phrase.back()
+        }
+    }
+
     VerticalLayout {
         basic_phrase := BasicPhraseStage {
             visible: false;
@@ -96,17 +107,6 @@ component VNeST inherits Rectangle {
                 basic_phrase.visible: true;
             }
         ]
-
-        function next() {
-            if state == VNeSTState.basic-phrase {
-                basic_phrase.next()
-            }
-        }
-        function back() {
-            if state == VNeSTState.basic-phrase {
-                basic_phrase.back()
-            }
-        }
 
         HorizontalLayout {
             alignment: space-between;
@@ -136,10 +136,35 @@ export component AppWindow inherits Window {
 
     title: "VNeST-S";
 
-    state: State.vnest;
+    changed state => {
+        self.focus()
+    }
+
+    state: State.menu;
 
     default-font-family: "Space Mono";
     default-font-size: 24px;
+
+    function next() {
+        if state == State.vnest {
+            vnest.next()
+        }
+        if state == State.menu {
+            state = State.vnest
+        }
+        if state == State.about {
+            state = State.menu
+        }
+    }
+
+    function back() {
+        if state == State.about {
+            state = State.menu
+        }
+        if state == State.vnest {
+            vnest.back()
+        }
+    }
 
     states [
         menu when state == State.menu: {
@@ -159,15 +184,37 @@ export component AppWindow inherits Window {
         }
     ]
 
-    menu := MainMenu {
-        state <=> state;
-    }
+    forward-focus: scope;
 
-    about := AboutPage {
-        state <=> state;
-    }
+    scope := FocusScope {
+        capture_key_pressed(event) => {
+            debug("press");
 
-    vnest := VNeST {
-        app_state <=> state;
+            if event.text == "\n" {
+                next();
+                return accept;
+            }
+            if event.text == "" {
+                next();
+                return accept;
+            }
+            if event.text == "" {
+                back();
+                return accept;
+            }
+            return reject;
+        }
+
+        menu := MainMenu {
+            state <=> state;
+        }
+
+        about := AboutPage {
+            state <=> state;
+        }
+
+        vnest := VNeST {
+            app_state <=> state;
+        }
     }
 }

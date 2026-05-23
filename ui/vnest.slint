@@ -6,19 +6,36 @@ component SubjectVerbObject {
     in-out property <string> verb-text <=> verb.text;
     in-out property <string> object-text <=> object.text;
 
+    in property <bool> subject_focused;
+    changed subject_focused => {
+        if subject_focused {
+            subject.focus();
+        } else if subject.has-focus {
+            //subject.clear-focus()
+        }
+    }
+
+    in property <bool> verb_focused;
+    changed verb_focused => {
+        if verb_focused {
+            verb.focus()
+        } else if verb.has_focus {
+            //verb.clear-focus()
+        }
+    }
+
+    in property <bool> object_focused;
+    changed object_focused => {
+        if object_focused {
+            object.focus();
+        } else if object.has-focus {
+            //object.clear-focus()
+        }
+    }
+
     callback subject_accepted();
     callback verb_accepted();
     callback object_accepted();
-
-    public function focus_subject() {
-        subject.focus()
-    }
-    public function focus_verb() {
-        verb.focus()
-    }
-    public function focus_object() {
-        object.focus()
-    }
 
     in property <bool> subject-visible: true;
     in property <bool> verb-visible: true;
@@ -154,6 +171,10 @@ export component BasicPhraseStage inherits Rectangle {
         }
     }
 
+    changed visible => {
+        self.reset();
+    }
+
     public function reset() {
         stage = 0;
         subject = "";
@@ -161,103 +182,12 @@ export component BasicPhraseStage inherits Rectangle {
         object = "";
     }
 
-    main := VerticalLayout {
-        Text {
-            text: stage;
-        }
-
-        Text {
-            text: "a";
-        }
-
-        Text {
-            text: "a";
-        }
-    }
-
-    callback done();
-    callback exit();
-}
-
-export component ExpandPhraseStage inherits Rectangle {
-    in property <string> subject: "";
-    in property <string> verb: "";
-    in property <string> object: "";
-
-    callback done();
-}
-
-export component VNeSTMain inherits Rectangle {
-    property <int> stage: 0;
-
-    property <string> verb: "";
-
-    private property <bool> verb_input_visible: stage >= 1;
-    private property <bool> verb_input_edit: stage == 1;
-
-    private property <bool> verb_exta_visible: false;
-
-    private property <bool> subject_edit: Math.mod(stage, 2) == 0;
-    private property <bool> object_edit: !subject_edit;
-
-    private property <int> line_n: (stage) / 2;
+    private property <int> line_n: stage / 2;
     private property <int> column_n: Math.mod((stage), 2);
 
-    function reset() {
-        verb = "";
+    private property <[{ subject: string, object: string}]> lines: [{ subject: "", object: "" }, { subject: "", object: "" }, { subject: "", object: "" }];
 
-        svo1.subject-text = "";
-        svo1.object-text = "";
-
-        svo2.subject-text = "";
-        svo2.object-text = "";
-
-        svo3.subject-text = "";
-        svo3.object-text = "";
-    }
-
-    function update_focus() {
-        if line_n <= 0 {
-            svo0.focus_verb()
-        }
-        if line_n == 1 {
-            if column_n == 0 {
-            }
-        }
-    }
-
-    public function next() -> bool {
-        stage += 1;
-
-        update_focus();
-
-        false
-    }
-
-    public function back() -> bool {
-        stage -= 1;
-
-        update_focus();
-
-        if stage == -1 {
-            return true;
-        }
-        false
-    }
-
-    Text {
-        y: 10px;
-        x: 20px;
-        text: stage + 1;
-    }
-
-    Text {
-        y: 40px;
-        x: 20px;
-        text: line_n;
-    }
-
-    VerticalLayout {
+    main := VerticalLayout {
         padding: 15px;
         spacing: 10px;
 
@@ -265,7 +195,7 @@ export component VNeSTMain inherits Rectangle {
             vertical-stretch: 1;
         }
 
-        svo0 := SubjectVerbObject {
+        head := SubjectVerbObject {
             subject-text: "Vem";
             object-text: "Vad";
 
@@ -285,10 +215,15 @@ export component VNeSTMain inherits Rectangle {
             verb-background: orangered;
             object-background: lightgreen;
 
-            verb-visible: verb_input_visible;
+            verb-visible: stage > 0;
 
             subject-read-only: true;
-            verb-read-only: !verb_input_edit;
+
+            verb-read-only: stage != 1;
+            verb_focused: !self.verb-read-only;
+
+            subject_focused: stage == 0;
+
             object-read-only: true;
 
             horizontal_alignment: center;
@@ -299,8 +234,10 @@ export component VNeSTMain inherits Rectangle {
             height: 10px;
         }
 
-        svo1 := SubjectVerbObject {
-            visible: line_n >= 1;
+        for line[index] in lines: SubjectVerbObject {
+            subject-text: line.subject;
+            verb-text: head.verb-text;
+            object-text: line.object;
 
             text-color: black;
             font-size: 24px;
@@ -319,80 +256,16 @@ export component VNeSTMain inherits Rectangle {
             subject-border-color: lightblue;
             object-border-color: lightgreen;
 
-            verb-visible: verb_exta_visible;
-            object-visible: line_n > 0;
+            subject-visible: line_n > index;
+            verb-visible: false;
+            object-visible: line_n > index;
 
-            subject-read-only: line_n > 1 || column_n == 1;
+            subject-read-only: line_n > index + 1 || column_n == 1;
             verb-read-only: true;
-            object-read-only: line_n > 1 || column_n == 0;
+            object-read-only: line_n > index + 1 || column_n == 0;
 
-            verb-text: svo0.verb-text;
-
-            horizontal_alignment: center;
-            vertical_alignment: center;
-        }
-
-        svo2 := SubjectVerbObject {
-            visible: line_n >= 2;
-
-            text-color: black;
-            font-size: 24px;
-            font-weight: 600;
-
-            height: 75px;
-            box-width: 250px;
-
-            spacing: 50px;
-
-            border-radius: 5px;
-            border-width: 2px;
-
-            verb-background: orangered;
-
-            subject-border-color: lightblue;
-            object-border-color: lightgreen;
-
-            verb-visible: verb_exta_visible;
-            object-visible: line_n > 1;
-
-            subject-read-only: line_n > 2 || column_n == 1;
-            verb-read-only: true;
-            object-read-only: line_n > 2 || column_n == 0;
-
-            verb-text: svo0.verb-text;
-
-            horizontal_alignment: center;
-            vertical_alignment: center;
-        }
-
-        svo3 := SubjectVerbObject {
-            visible: line_n >= 3;
-
-            text-color: black;
-            font-size: 24px;
-            font-weight: 600;
-
-            height: 75px;
-            box-width: 250px;
-
-            spacing: 50px;
-
-            border-radius: 5px;
-            border-width: 2px;
-
-            verb-background: orangered;
-
-            subject-border-color: lightblue;
-            object-border-color: lightgreen;
-
-            verb-visible: verb_exta_visible;
-            object-visible: line_n > 1;
-
-            subject-read-only: line_n > 3 || column_n == 1;
-            verb-read-only: true;
-            object-read-only: line_n > 3 || column_n == 0;
-
-            verb-text: svo0.verb-text;
+            subject_focused: self.subject_visible && !self.subject-read-only;
+            object_focused: self.object_visible && !self.object-read-only;
 
             horizontal_alignment: center;
             vertical_alignment: center;
@@ -402,4 +275,15 @@ export component VNeSTMain inherits Rectangle {
             vertical-stretch: 1;
         }
     }
+
+    callback done();
+    callback exit();
+}
+
+    export component ExpandPhraseStage inherits Rectangle {
+    in property <string> subject: "";
+    in property <string> verb: "";
+    in property <string> object: "";
+
+    callback done();
 }

@@ -47,6 +47,8 @@ export component LineInput inherits Rectangle {
     in property <bool> enabled <=> input.enabled;
     in property <bool> read_only <=> input.read-only;
 
+    out property <bool> has-focus: input.has-focus;
+
     forward-focus: input;
 
     border-color: self.background.darker(50%);
