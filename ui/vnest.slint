@@ -68,6 +68,8 @@ export component BasicPhraseStage inherits Rectangle {
 
     private property <int> selected_line: -1;
 
+    private property <bool> help;
+
     focus := FocusScope {
         phrases := HorizontalLayout {
             visible: read_verb_n != -1 && read_verb_n != 4;
@@ -215,6 +217,8 @@ export component BasicPhraseStage inherits Rectangle {
             text: "Steg 3: Utveckla en mening";
             font-weight: FontWeight.bold;
         }
+
+        help := TextBox {}
     }
 
     callback done();
