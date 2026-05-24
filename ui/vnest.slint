@@ -5,11 +5,11 @@ import { SubjectVerbObject } from "svo.slint";
 export component BasicPhraseStage inherits Rectangle {
     property <int> stage: 0;
 
-    out property <string> subject: "";
-    out property <string> verb: "";
-    out property <string> object: "";
+    out property <string> subject: selected_line == -1 ? "" : subjects_objects[selected_line].subject;
+    out property <string> verb: selected_line == -1 ? "" : head.verb-text;
+    out property <string> object: selected_line == -1 ? "" : subjects_objects[selected_line].object;
 
-    out property <bool> can-next: read_verb_n != 5;
+    out property <bool> can-next: read_verb_n != 5 || selected_line != -1;
 
     private property <[{ subject: string, object: string, selected: bool}]> subjects_objects: [
         { subject: "", object: "", selected: false },
@@ -19,6 +19,10 @@ export component BasicPhraseStage inherits Rectangle {
 
     public function next() {
         stage += 1;
+
+        if selected_line != -1 {
+            done()
+        }
 
         // workaround to avoid loosing focus when hiding last focused element in 1 specific case (might look for read fix eventually)
         if read_verb_n == -1 {
@@ -82,7 +86,7 @@ export component BasicPhraseStage inherits Rectangle {
                 }
 
                 head := SubjectVerbObject {
-                    subject-text: read_verb_n;
+                    subject-text: "Vem";
                     object-text: "Vad";
 
                     text-color: black;
@@ -179,8 +183,8 @@ export component BasicPhraseStage inherits Rectangle {
 
                         verb-background: verb-color;
 
-                        subject-border-color: subject-color;
-                        object-border-color: object-color;
+                        subject-border-color: subject-border;
+                        object-border-color: object-border;
 
                         subject-visible: line_n > index;
                         verb-visible: read_verb_n == index + 1 || select_stage;

@@ -98,13 +98,19 @@ component AboutPage inherits Rectangle {
     }
 }
 
-enum VNeSTState {basic_phrase}
+enum VNeSTState {basic_phrase, expand_phrase}
 
 component VNeST inherits Rectangle {
     in-out property <State> app_state;
     property <VNeSTState> state: VNeSTState.basic_phrase;
 
     property <bool> can-next: state == VNeSTState.basic-phrase ? basic_phrase.can-next : false;
+
+    public function reset() {
+        state = VNeSTState.basic-phrase;
+
+        basic_phrase.reset();
+    }
 
     public function next() {
         if !can-next {
@@ -113,10 +119,16 @@ component VNeST inherits Rectangle {
         if state == VNeSTState.basic-phrase {
             basic_phrase.next()
         }
+        if state == VNeSTState.expand-phrase {
+            debug("todo");
+        }
     }
     public function back() {
         if state == VNeSTState.basic-phrase {
             basic_phrase.back()
+        }
+        if state == VNeSTState.expand-phrase {
+            debug("todo");
         }
     }
 
@@ -128,6 +140,10 @@ component VNeST inherits Rectangle {
             exit => {
                 app_state = State.menu;
                 basic_phrase.reset();
+            }
+
+            done => {
+                state = VNeSTState.expand-phrase;
             }
         }
 
