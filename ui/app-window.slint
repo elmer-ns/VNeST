@@ -6,7 +6,6 @@ import "assets/fonts/SpaceMono/SpaceMono-BoldItalic.ttf";
 import "assets/fonts/SpaceMono/SpaceMono-Italic.ttf";
 import { Button, AboutSlint } from "std-widgets.slint";
 import { BasicPhraseStage } from "vnest.slint";
-import { CheckBox } from "checkbox.slint";
 
 export enum State {menu, about, vnest}
 
@@ -164,6 +163,7 @@ component VNeST inherits Rectangle {
 }
 
 export component AppWindow inherits Window {
+    no-frame: false;
     property <State> state: State.menu;
 
     title: "VNeST-S";
@@ -174,6 +174,7 @@ export component AppWindow inherits Window {
 
     default-font-family: "Space Mono";
     default-font-size: 28px;
+    full-screen: false;
 
     function next() {
         if state == State.vnest {
