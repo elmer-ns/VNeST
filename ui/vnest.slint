@@ -9,13 +9,37 @@ export component BasicPhraseStage inherits Rectangle {
     out property <string> verb: selected_line == -1 ? "" : head.verb-text;
     out property <string> object: selected_line == -1 ? "" : subjects_objects[selected_line].object;
 
-    out property <bool> can-next: read_verb_n != 5 || selected_line != -1;
+    out property <bool> can-next: (read_verb_n != 5 || selected_line != -1) && (!self.help || help.can-next);
 
     private property <[{ subject: string, object: string, selected: bool}]> subjects_objects: [
         { subject: "", object: "", selected: false },
         { subject: "", object: "", selected: false },
         { subject: "", object: "", selected: false },
     ];
+
+    public function reset() {
+        debug("reset!!");
+
+        stage = 0;
+        subject = "";
+        verb = "";
+        object = "";
+
+        debug(subjects_objects[0].subject);
+
+        subjects_objects[0].subject = "";
+        subjects_objects[0].object = "";
+        subjects_objects[1].subject = "";
+        subjects_objects[1].object = "";
+        subjects_objects[2].subject = "";
+        subjects_objects[2].object = "";
+
+        debug(subjects_objects[0].subject);
+        debug("------------");
+    }
+
+    function set_selected(text: string) {
+    }
 
     public function next() {
         stage += 1;
@@ -30,6 +54,10 @@ export component BasicPhraseStage inherits Rectangle {
         }
     }
     public function back() {
+        if self.help {
+            self.help = false;
+            return;
+        }
         stage -= 1;
 
         // workaround to avoid loosing focus when hiding last focused element in 1 specific case (might look for read fix eventually)
@@ -43,13 +71,6 @@ export component BasicPhraseStage inherits Rectangle {
 
     changed visible => {
         self.reset();
-    }
-
-    public function reset() {
-        stage = 0;
-        subject = "";
-        verb = "";
-        object = "";
     }
 
     private property <int> line_n: stage / 2;
@@ -71,8 +92,30 @@ export component BasicPhraseStage inherits Rectangle {
     private property <bool> help;
 
     focus := FocusScope {
+        help-button := TouchArea {
+            visible: stage > 1 && stage < 8 && !root.help;
+
+            clicked => {
+                root.help = true;
+            }
+
+            x: (-root.width / 2) + 35px;
+            y: (-root.height / 2) + 35px;
+
+            Rectangle {
+                width: 35px;
+                height: 35px;
+
+                background: pink;
+
+                Text {
+                    text: stage;
+                }
+            }
+        }
+
         phrases := HorizontalLayout {
-            visible: read_verb_n != -1 && read_verb_n != 4;
+            visible: read_verb_n != -1 && read_verb_n != 4 && !root.help;
 
             main := VerticalLayout {
                 padding-left: 85px;
@@ -168,6 +211,14 @@ export component BasicPhraseStage inherits Rectangle {
                         verb-text: head.verb-text;
                         object-text: line.object;
 
+                        changed subject-text => {
+                            line.subject = self.subject-text;
+
+                            debug("le subtext change!");
+                            debug(self.subject-text);
+                            debug(line.subject);
+                        }
+
                         width: 100%;
                         height: 100%;
 
@@ -216,7 +267,15 @@ export component BasicPhraseStage inherits Rectangle {
             font-weight: FontWeight.bold;
         }
 
-        help := TextBox { }
+        help := VerticalLayout {
+            visible: root.help;
+
+            Text {
+                text: "uhhh";
+            }
+
+            out property <bool> can-next: false;
+        }
     }
 
     callback done();
