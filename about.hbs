@@ -1,0 +1,22 @@
+# Third-Party Software Notices
+
+This application integrates third-party software packages. The required copyright notices and licensing terms for these packages are detailed below.
+
+## Overview of Licenses Used
+{{#each overview}}
+* [{{~name~}}](#{{~id~}})
+{{/each}}
+
+---
+
+{{#each licenses}}
+## {{name}}
+
+### Used by:
+{{#each used_by}}
+* **{{crate.name}} {{crate.version}}**
+  {{#if crate.repository}} - Repository: [{{crate.repository}}]({{crate.repository}}) {{/if}}
+{{/each}}
+
+### License Text:
+{{{text}}} {{/each}}
