@@ -11,31 +11,22 @@ export component BasicPhraseStage inherits Rectangle {
 
     out property <bool> can-next: (read_verb_n != 5 || selected_line != -1) && (!self.help || help.can-next);
 
-    private property <[{ subject: string, object: string, selected: bool}]> subjects_objects: [
-        { subject: "", object: "", selected: false },
-        { subject: "", object: "", selected: false },
-        { subject: "", object: "", selected: false },
+    out property <[{ subject: string, object: string, selected: bool, reset: bool}]> subjects_objects: [
+        { subject: "", object: "", selected: false, reset: false },
+        { subject: "", object: "", selected: false, reset: false },
+        { subject: "", object: "", selected: false, reset: false },
     ];
 
     public function reset() {
         debug("reset!!");
 
         stage = 0;
-        subject = "";
-        verb = "";
-        object = "";
 
-        debug(subjects_objects[0].subject);
+        head.verb-text = "";
 
-        subjects_objects[0].subject = "";
-        subjects_objects[0].object = "";
-        subjects_objects[1].subject = "";
-        subjects_objects[1].object = "";
-        subjects_objects[2].subject = "";
-        subjects_objects[2].object = "";
-
-        debug(subjects_objects[0].subject);
-        debug("------------");
+        subjects_objects[0].reset = true;
+        subjects_objects[1].reset = true;
+        subjects_objects[2].reset = true;
     }
 
     function set_selected(text: string) {
@@ -211,12 +202,18 @@ export component BasicPhraseStage inherits Rectangle {
                         verb-text: head.verb-text;
                         object-text: line.object;
 
+                        p-reset-subject: line.reset;
+                        p-reset-object: line.reset;
+
+                        subject_reset => {
+                            line.reset = false;
+                        }
+
                         changed subject-text => {
                             line.subject = self.subject-text;
-
-                            debug("le subtext change!");
-                            debug(self.subject-text);
-                            debug(line.subject);
+                        }
+                        changed object-text => {
+                            line.object = self.object-text;
                         }
 
                         width: 100%;
