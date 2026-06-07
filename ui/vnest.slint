@@ -28,9 +28,16 @@ export component BasicPhraseStage inherits Rectangle {
     }
 
     function set_selected(text: string) {
+        debug("set selected");
+        debug(text);
+
         if line_n == 0 || line_n > 3 {
+            debug("no selected!");
             return;
         }
+        debug("column, row: ");
+        debug(column_n);
+        debug(line_n);
         if column_n == 0 {
             subjects_objects[line_n - 1].subject = text;
         }
@@ -213,22 +220,51 @@ export component BasicPhraseStage inherits Rectangle {
                     }
 
                     SubjectVerbObject {
+
                         subject-text: line.subject;
                         verb-text: head.verb-text;
                         object-text: line.object;
 
-                        p-reset-subject: line.reset;
-                        p-reset-object: line.reset;
+                        property <bool> reset: line.reset;
 
-                        subject_reset => {
-                            line.reset = false;
+                        // subject-in and object-in exist as a substitute for a two way binding between line.subject/line.object and self.subject-text/self.object-text, which currently is not supported.
+                        property <string> subject-in: line.subject;
+                        property <string> object-in: line.object;
+
+                        changed subject-in => {
+                            self.subject-text = subject-in;
+                        }
+
+                        changed object-in => {
+                            self.object-text = object-in;
+                        }
+
+                        changed reset => {
+                            if reset {
+                                line.subject = "";
+                                line.object = "";
+                                line.reset = false;
+                                if index == 0 {
+                                    debug("-- pre-reset: --");
+                                    debug(line.subject);
+                                    debug(self.subject-text);
+                                    debug("-- reset: --");
+                                    debug(line.subject);
+                                    debug(self.subject-text);
+                                    debug("--");
+                                }
+                            }
                         }
 
                         changed subject-text => {
-                            line.subject = self.subject-text;
+                            if self.subject-text != line.subject {
+                                line.subject = self.subject-text;
+                            }
                         }
                         changed object-text => {
-                            line.object = self.object-text;
+                            if self.object-text != line.object {
+                                line.object = self.object-text;
+                            }
                         }
 
                         width: 100%;

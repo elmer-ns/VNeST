@@ -8,42 +8,6 @@ export component SubjectVerbObject {
     in property <bool> p-reset-verb;
     in property <bool> p-reset-object;
 
-    // Reset Subject
-    changed p-reset-subject => {
-        if p-reset-subject {
-            reset_subject();
-        }
-    }
-    public function reset_subject() {
-        subject-text = "";
-        subject_reset()
-    }
-    callback subject_reset();
-
-    // Reset Verb
-    changed p-reset-verb => {
-        if p-reset-verb {
-            reset_verb();
-        }
-    }
-    public function reset_verb() {
-        verb-text = "";
-        verb_reset()
-    }
-    callback verb_reset();
-
-    // Reset Verb
-    changed p-reset-object => {
-        if p-reset-object {
-            reset_object();
-        }
-    }
-    public function reset_object() {
-        object-text = "";
-        object_reset()
-    }
-    callback object_reset();
-
     // assumes subject, verb, and object boxes are the same size
     out property <length> box-width: subject.width;
     // assumes subject, verb, and object boxes are the same size
