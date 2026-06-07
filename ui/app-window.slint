@@ -3,7 +3,7 @@ import "assets/fonts/SpaceMono/SpaceMono-Bold.ttf";
 import "assets/fonts/SpaceMono/SpaceMono-BoldItalic.ttf";
 import "assets/fonts/SpaceMono/SpaceMono-Italic.ttf";
 import { Button, AboutSlint } from "std-widgets.slint";
-import { BasicPhraseStage } from "vnest.slint";
+import { BasicPhraseStage, ExpandPhraseStage } from "vnest.slint";
 
 export enum State {menu, about, vnest}
 
@@ -108,6 +108,7 @@ component VNeST inherits Rectangle {
         state = VNeSTState.basic-phrase;
 
         basic_phrase.reset();
+        expand_phrase.reset();
     }
 
     public function next() {
@@ -118,7 +119,7 @@ component VNeST inherits Rectangle {
             basic_phrase.next()
         }
         if state == VNeSTState.expand-phrase {
-            debug("todo");
+            expand_phrase.next();
         }
     }
     public function back() {
@@ -126,22 +127,41 @@ component VNeST inherits Rectangle {
             basic_phrase.back()
         }
         if state == VNeSTState.expand-phrase {
-            debug("todo");
+            expand_phrase.back();
         }
     }
 
     VerticalLayout {
-        basic_phrase := BasicPhraseStage {
-            visible: false;
-            vertical-stretch: 1;
+        Rectangle {
+            basic_phrase := BasicPhraseStage {
+                visible: false;
+                vertical-stretch: 1;
 
-            exit => {
-                app_state = State.menu;
-                basic_phrase.reset();
+                exit => {
+                    debug("exit basci");
+                    app_state = State.menu;
+                    basic_phrase.reset();
+                }
+
+                done => {
+                    debug("done basci");
+                    state = VNeSTState.expand-phrase;
+                    expand_phrase.next();
+                }
             }
 
-            done => {
-                state = VNeSTState.expand-phrase;
+            expand_phrase := ExpandPhraseStage {
+                subject: basic_phrase.subject;
+                verb: basic_phrase.verb;
+                object: basic_phrase.object;
+
+                visible: false;
+                vertical-stretch: 1;
+
+                exit => {
+                    debug("exit");
+                    state = VNeSTState.basic-phrase;
+                }
             }
         }
 
@@ -149,8 +169,10 @@ component VNeST inherits Rectangle {
             basic_phrase when state == VNeSTState.basic-phrase: {
                 basic_phrase.visible: true;
             }
+            expand_phrase when state == VNeSTState.expand-phrase: {
+                expand_phrase.visible: true;
+            }
         ]
-
         HorizontalLayout {
             alignment: space-between;
             padding: 15px;

@@ -2,6 +2,27 @@ import { StyleMetrics, HorizontalBox } from "std-widgets.slint";
 import { TextBox, LineInput } from "text_box.slint";
 import { SubjectVerbObject } from "svo.slint";
 
+global Style {
+    out property <brush> subject-color:  #DDEAF6;
+    out property <brush> verb-color:  #F4AF91;
+    out property <brush> object-color:  #E1EFD8;
+
+    out property <brush> subject-border: #BACDDD;
+    out property <brush> verb-border: #A56C46;
+    out property <brush> object-border: #BBC8B2;
+
+    out property <brush> where-color: #DDEAF6;
+    out property <brush> when-color: #E1EFD8;
+    out property <brush> why-color: #FFF2CC;
+
+    out property <brush> where-border: #1E4E79;
+    out property <brush> when-border: #385623;
+    out property <brush> why-border: #E9D79D;
+
+    out property <length> border-width: 2px;
+    out property <length> border-radius: 5px;
+}
+
 export component BasicPhraseStage inherits Rectangle {
     property <int> stage: 0;
 
@@ -18,26 +39,21 @@ export component BasicPhraseStage inherits Rectangle {
     ];
 
     public function reset() {
+        debug("reset basic phrase stage");
+
         stage = 0;
-
         head.verb-text = "";
-
         subjects_objects[0].reset = true;
         subjects_objects[1].reset = true;
         subjects_objects[2].reset = true;
     }
 
     function set_selected(text: string) {
-        debug("set selected");
         debug(text);
 
         if line_n == 0 || line_n > 3 {
-            debug("no selected!");
             return;
         }
-        debug("column, row: ");
-        debug(column_n);
-        debug(line_n);
         if column_n == 0 {
             subjects_objects[line_n - 1].subject = text;
         }
@@ -47,6 +63,7 @@ export component BasicPhraseStage inherits Rectangle {
     }
 
     public function next() {
+        debug(stage);
 
         if self.help {
             self.help = false;
@@ -56,10 +73,11 @@ export component BasicPhraseStage inherits Rectangle {
 
             return;
         }
-        stage += 1;
-        if selected_line != -1 {
-            done()
+        if selected_line != -1 && stage == 15 {
+            done();
+            return;
         }
+        stage += 1;
 
         // workaround to avoid loosing focus when hiding last focused element in 1 specific case (might look for read fix eventually)
         if read_verb_n == -1 {
@@ -82,10 +100,6 @@ export component BasicPhraseStage inherits Rectangle {
         if stage == -1 {
             exit();
         }
-    }
-
-    changed visible => {
-        self.reset();
     }
 
     private property <int> line_n: stage / 2;
@@ -244,15 +258,6 @@ export component BasicPhraseStage inherits Rectangle {
                                 line.subject = "";
                                 line.object = "";
                                 line.reset = false;
-                                if index == 0 {
-                                    debug("-- pre-reset: --");
-                                    debug(line.subject);
-                                    debug(self.subject-text);
-                                    debug("-- reset: --");
-                                    debug(line.subject);
-                                    debug(self.subject-text);
-                                    debug("--");
-                                }
                             }
                         }
 
@@ -419,9 +424,161 @@ export component BasicPhraseStage inherits Rectangle {
 }
 
 export component ExpandPhraseStage inherits Rectangle {
-    in property <string> subject: "";
-    in property <string> verb: "";
-    in property <string> object: "";
+    property <int> stage: -1;
+
+    in property <string> subject;
+    in property <string> verb;
+    in property <string> object;
+
+    public function next() {
+        self.stage += 1
+    }
+
+    public function back() {
+        self.stage -= 1;
+
+        if self.stage == -1 {
+            exit()
+        }
+    }
+
+    public function reset() {
+        debug("reset expand phrase stage");
+    }
+
+    VerticalLayout {
+        padding-left: 85px;
+        padding-right: 85px;
+        padding-top: 50px;
+        padding-bottom: 50px;
+
+        spacing: 25px;
+
+        height: 100%;
+        width: 100%;
+
+        what := SubjectVerbObject {
+            min-height: 50px;
+
+            spacing: 50px;
+
+            subject-text: subject;
+            verb-text: verb;
+            object-text: object;
+
+            horizontal_alignment: center;
+            vertical_alignment: center;
+
+            text-color: black;
+            font-weight: 600;
+
+            border-radius: Style.border-radius;
+            border-width: Style.border-width;
+
+            verb-background: Style.verb-color;
+
+            subject-border-color: Style.subject-border;
+            verb-border-color: Style.verb-border;
+            object-border-color: Style.object-border;
+        }
+
+        HorizontalLayout {
+            vertical-stretch: 1;
+
+            min-height: 50px;
+            spacing: 50px;
+
+            TextBox {
+                width: 30%;
+
+                background: Style.where-color;
+                border-color: Style.where-border;
+
+                border-width: Style.border-width;
+                border-radius: Style.border-radius;
+
+                text-color: black;
+                font-weight: 600;
+
+                text: "Var";
+            }
+
+            where := LineInput {
+                border-color: red;
+
+                border-width: Style.border-width;
+                border-radius: Style.border-radius;
+
+                text-color: black;
+                font-weight: 600;
+            }
+        }
+
+        HorizontalLayout {
+            vertical-stretch: 1;
+            spacing: 50px;
+
+            min-height: 50px;
+
+            TextBox {
+                width: 30%;
+
+                background: Style.when-color;
+                border-color: Style.when-border;
+
+                border-width: Style.border-width;
+                border-radius: Style.border-radius;
+
+                text-color: black;
+                font-weight: 600;
+
+                text: "När";
+            }
+
+            when := LineInput {
+                border-color: red;
+
+                border-width: Style.border-width;
+                border-radius: Style.border-radius;
+
+                text-color: black;
+                font-weight: 600;
+            }
+        }
+
+        HorizontalLayout {
+            vertical-stretch: 1;
+            spacing: 50px;
+
+            min-height: 50px;
+
+            TextBox {
+                width: 30%;
+
+                background: Style.why-color;
+                border-color: Style.why-border;
+
+                border-width: Style.border-width;
+                border-radius: Style.border-radius;
+
+                text-color: black;
+                font-weight: 600;
+
+                text: "Varför";
+            }
+
+            why := LineInput {
+                border-color: red;
+
+                border-width: Style.border-width;
+                border-radius: Style.border-radius;
+
+                text-color: black;
+                font-weight: 600;
+            }
+        }
+    }
 
     callback done();
+    callback exit();
 }
