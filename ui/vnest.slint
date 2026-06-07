@@ -114,10 +114,16 @@ export component BasicPhraseStage inherits Rectangle {
                 width: 35px;
                 height: 35px;
 
-                background: pink;
+                border-radius: 35px / 2;
+                border-width: 2px;
 
-                Text {
-                    text: stage;
+                background: pink;
+                border-color: hotpink;
+
+                Image {
+                    source: @image-url("assets/question.svg");
+                    width: 80%;
+                    height: 80%;
                 }
             }
         }
@@ -134,10 +140,6 @@ export component BasicPhraseStage inherits Rectangle {
                 spacing: 25px;
                 width: 100%;
 
-                Rectangle {
-                    vertical-stretch: 1;
-                }
-
                 head := SubjectVerbObject {
                     subject-text: "Vem";
                     object-text: "Vad";
@@ -148,7 +150,7 @@ export component BasicPhraseStage inherits Rectangle {
                     spacing: 50px;
 
                     vertical-stretch: 1;
-                    min-height: 75px;
+                    min-height: 50px;
 
                     border-radius: 5px;
                     border-width: 2px;
@@ -172,12 +174,8 @@ export component BasicPhraseStage inherits Rectangle {
                     vertical_alignment: center;
                 }
 
-                Rectangle {
-                    height: 10px;
-                }
-
                 for line[index] in subjects_objects: Rectangle {
-                    min-height: 75px;
+                    min-height: 50px;
 
                     TouchArea {
                         visible: read_verb_n == 5;
@@ -311,11 +309,11 @@ export component BasicPhraseStage inherits Rectangle {
                 padding-top: 50px;
                 padding-bottom: 50px;
 
-                spacing: 75px;
+                spacing: 25px;
                 width: 100%;
 
                 for line[index] in words: rct := Rectangle {
-                    min-height: 75px;
+                    min-height: 50px;
 
                     LineInput {
                         background: subject-color;
