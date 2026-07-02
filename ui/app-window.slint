@@ -158,6 +158,12 @@ component VNeST inherits Rectangle {
                 visible: false;
                 vertical-stretch: 1;
 
+                done => {
+                    debug("all done!");
+                    reset();
+                    back();
+                }
+
                 exit => {
                     debug("exit");
                     state = VNeSTState.basic-phrase;
