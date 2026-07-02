@@ -102,7 +102,7 @@ component VNeST inherits Rectangle {
     in-out property <State> app_state;
     property <VNeSTState> state: VNeSTState.basic_phrase;
 
-    property <bool> can-next: state == VNeSTState.basic-phrase ? basic_phrase.can-next : false;
+    property <bool> can-next: state == VNeSTState.basic-phrase ? basic_phrase.can-next : expand_phrase.can-next;
 
     public function reset() {
         state = VNeSTState.basic-phrase;

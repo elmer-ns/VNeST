@@ -426,6 +426,8 @@ export component BasicPhraseStage inherits Rectangle {
 export component ExpandPhraseStage inherits Rectangle {
     property <int> stage: -1;
 
+    out property <bool> can-next: true;
+
     in property <string> subject;
     in property <string> verb;
     in property <string> object;
@@ -482,7 +484,13 @@ export component ExpandPhraseStage inherits Rectangle {
             object-border-color: Style.object-border;
         }
 
-        HorizontalLayout {
+        for line[i] in [
+            { text: "", label: "Var", color: Style.where-color, border: Style.where-border },
+            { text: "", label: "När", color: Style.when-color, border: Style.when-border },
+            { text: "", label: "Varför", color: Style.why-color, border: Style.why-border }
+        ]: HorizontalLayout {
+            visible: root.stage >= i;
+
             vertical-stretch: 1;
 
             min-height: 50px;
@@ -491,8 +499,8 @@ export component ExpandPhraseStage inherits Rectangle {
             TextBox {
                 width: 30%;
 
-                background: Style.where-color;
-                border-color: Style.where-border;
+                background: line.color;
+                border-color: line.border;
 
                 border-width: Style.border-width;
                 border-radius: Style.border-radius;
@@ -500,10 +508,13 @@ export component ExpandPhraseStage inherits Rectangle {
                 text-color: black;
                 font-weight: 600;
 
-                text: "Var";
+                text: line.label;
             }
 
-            where := LineInput {
+            LineInput {
+                read_only: root.stage > i;
+
+                background: self.focused ? red : transparent;
                 border-color: red;
 
                 border-width: Style.border-width;
@@ -511,70 +522,24 @@ export component ExpandPhraseStage inherits Rectangle {
 
                 text-color: black;
                 font-weight: 600;
-            }
-        }
 
-        HorizontalLayout {
-            vertical-stretch: 1;
-            spacing: 50px;
+                horizontal_alignment: center;
 
-            min-height: 50px;
+                text: line.text;
 
-            TextBox {
-                width: 30%;
+                private property <bool> focused: (root.stage == i);
 
-                background: Style.when-color;
-                border-color: Style.when-border;
+                changed focused => {
+                    if focused {
+                        self.focus()
+                    } else if self.has-focus {
+                        self.clear-focus()
+                    }
+                }
 
-                border-width: Style.border-width;
-                border-radius: Style.border-radius;
-
-                text-color: black;
-                font-weight: 600;
-
-                text: "När";
-            }
-
-            when := LineInput {
-                border-color: red;
-
-                border-width: Style.border-width;
-                border-radius: Style.border-radius;
-
-                text-color: black;
-                font-weight: 600;
-            }
-        }
-
-        HorizontalLayout {
-            vertical-stretch: 1;
-            spacing: 50px;
-
-            min-height: 50px;
-
-            TextBox {
-                width: 30%;
-
-                background: Style.why-color;
-                border-color: Style.why-border;
-
-                border-width: Style.border-width;
-                border-radius: Style.border-radius;
-
-                text-color: black;
-                font-weight: 600;
-
-                text: "Varför";
-            }
-
-            why := LineInput {
-                border-color: red;
-
-                border-width: Style.border-width;
-                border-radius: Style.border-radius;
-
-                text-color: black;
-                font-weight: 600;
+                changed text => {
+                    line.text = self.text;
+                }
             }
         }
     }
