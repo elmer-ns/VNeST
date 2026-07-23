@@ -14,9 +14,3 @@ accepted = [
     "BSL-1.0",
     "LicenseRef-Slint-Royalty-free-2.0", # Allowed since "Made with Slint" graphic is included, and this software is not built for embedded systems
 ]
-
-[slint.clarify]
-license = "LicenseRef-Slint-Royalty-free-2.0"
-[[slint.clarify.files]]
-path = "LICENSES/LicenseRef-Slint-Royalty-free-2.0.md"
-checksum = "5167f5056e850419106ab6265efbdca7cba4d99c849d1445ca0bbf6a1e2315fe"
