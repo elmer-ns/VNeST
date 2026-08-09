@@ -5,7 +5,7 @@ import "assets/fonts/SpaceMono/SpaceMono-Italic.ttf";
 import { Button, AboutSlint } from "std-widgets.slint";
 import { BasicPhraseStage, ExpandPhraseStage } from "vnest.slint";
 
-export enum State {menu, about, vnest}
+export enum State { menu, about, vnest }
 
 component MainMenu inherits Rectangle {
     width: 100%;
@@ -66,22 +66,38 @@ component AboutPage inherits Rectangle {
 
     in-out property <State> state;
 
-    HorizontalLayout {
-        alignment: center;
+    VerticalLayout {
+        padding: 10px;
+        alignment: space-around;
+
+        Text {
+            text: "Om:";
+            horizontal-alignment: center;
+            font-weight: FontWeight.bold;
+        }
 
         VerticalLayout {
-            padding: 10px;
+            padding: 0px;
+            alignment: center;
 
             Text {
-                text: "Om:";
+                text: "Av: Elmer Nolgren Saldert";
                 horizontal-alignment: center;
-                font-weight: FontWeight.bold;
             }
 
-            AboutSlint {
-                height: 100px;
-                width: 100%;
+            StyledText {
+                horizontal-alignment: center;
+                text: @markdown("Källkod: [github.com/elmer-ns/VNeST](https://github.com/elmer-ns/VNeST)");
+
+                link-clicked(link) => {
+                    Platform.open-url(link);
+                }
             }
+        }
+
+        AboutSlint {
+            height: 100px;
+            width: 100%;
         }
     }
 
@@ -96,7 +112,7 @@ component AboutPage inherits Rectangle {
     }
 }
 
-enum VNeSTState {basic_phrase, expand_phrase}
+enum VNeSTState { basic_phrase, expand_phrase }
 
 component VNeST inherits Rectangle {
     in-out property <State> app_state;
