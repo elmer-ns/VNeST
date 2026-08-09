@@ -32,15 +32,13 @@ export component BasicPhraseStage inherits Rectangle {
 
     out property <bool> can-next: (read_verb_n != 5 || selected_line != -1) && (!self.help || help.can-next);
 
-    out property <[{ subject: string, object: string, selected: bool, reset: bool}]> subjects_objects: [
+    out property <[{ subject: string, object: string, selected: bool, reset: bool }]> subjects_objects: [
         { subject: "", object: "", selected: false, reset: false },
         { subject: "", object: "", selected: false, reset: false },
         { subject: "", object: "", selected: false, reset: false },
     ];
 
     public function reset() {
-        debug("reset basic phrase stage");
-
         stage = 0;
         head.verb-text = "";
         subjects_objects[0].reset = true;
@@ -49,8 +47,6 @@ export component BasicPhraseStage inherits Rectangle {
     }
 
     function set_selected(text: string) {
-        debug(text);
-
         if line_n == 0 || line_n > 3 {
             return;
         }
@@ -63,8 +59,6 @@ export component BasicPhraseStage inherits Rectangle {
     }
 
     public function next() {
-        debug(stage);
-
         if self.help {
             self.help = false;
             set_selected(help.word);
@@ -326,7 +320,7 @@ export component BasicPhraseStage inherits Rectangle {
             property <int> selected_word: -1;
 
             out property <string> word: selected_word == -1 ? "" : words[selected_word].word;
-            out property <[{ word: string, reset: bool}]> words: [
+            out property <[{ word: string, reset: bool }]> words: [
                 { word: "", reset: false },
                 { word: "", reset: false },
                 { word: "", reset: false },
@@ -449,7 +443,6 @@ export component ExpandPhraseStage inherits Rectangle {
     }
 
     public function reset() {
-        debug("reset expand phrase stage");
     }
 
     expand := VerticalLayout {
