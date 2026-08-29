@@ -26,24 +26,32 @@ global Style {
 export component BasicPhraseStage inherits Rectangle {
     property <int> stage: 0;
 
-    out property <string> subject: selected_line == -1 ? "" : subjects_objects[selected_line].subject;
+    out property <string> subject: selected_line == -1 ? "" : root.phrases[selected_line].subject;
     out property <string> verb: selected_line == -1 ? "" : head.verb-text;
-    out property <string> object: selected_line == -1 ? "" : subjects_objects[selected_line].object;
+    out property <string> object: selected_line == -1 ? "" : root.phrases[selected_line].object;
 
     out property <bool> can-next: (read_verb_n != 5 || selected_line != -1) && (!self.help || help.can-next);
 
-    out property <[{ subject: string, object: string, selected: bool, reset: bool }]> subjects_objects: [
-        { subject: "", object: "", selected: false, reset: false },
-        { subject: "", object: "", selected: false, reset: false },
-        { subject: "", object: "", selected: false, reset: false },
+    out property <[{ subject: string, object: string, selected: bool }]> phrases: [
+        { subject: "", object: "", selected: false },
+        { subject: "", object: "", selected: false },
+        { subject: "", object: "", selected: false },
     ];
 
     public function reset() {
         stage = 0;
         head.verb-text = "";
-        subjects_objects[0].reset = true;
-        subjects_objects[1].reset = true;
-        subjects_objects[2].reset = true;
+
+        root.phrases[0].subject = "";
+        root.phrases[0].object = "";
+
+        root.phrases[1].subject = "";
+        root.phrases[1].object = "";
+
+        root.phrases[2].subject = "";
+        root.phrases[2].object = "";
+
+        selected_line = -1;
     }
 
     function set_selected(text: string) {
@@ -51,10 +59,10 @@ export component BasicPhraseStage inherits Rectangle {
             return;
         }
         if column_n == 0 {
-            subjects_objects[line_n - 1].subject = text;
+            root.phrases[line_n - 1].subject = text;
         }
         if column_n == 1 {
-            subjects_objects[line_n - 1].object = text;
+            root.phrases[line_n - 1].object = text;
         }
     }
 
@@ -189,7 +197,7 @@ export component BasicPhraseStage inherits Rectangle {
                     vertical_alignment: center;
                 }
 
-                for line[index] in subjects_objects: Rectangle {
+                for line[index] in root.phrases: Rectangle {
                     min-height: 50px;
 
                     TouchArea {
@@ -229,42 +237,9 @@ export component BasicPhraseStage inherits Rectangle {
 
                     SubjectVerbObject {
 
-                        subject-text: line.subject;
-                        verb-text: head.verb-text;
-                        object-text: line.object;
-
-                        property <bool> reset: line.reset;
-
-                        // subject-in and object-in exist as a substitute for a two way binding between line.subject/line.object and self.subject-text/self.object-text, which currently is not supported.
-                        property <string> subject-in: line.subject;
-                        property <string> object-in: line.object;
-
-                        changed subject-in => {
-                            self.subject-text = subject-in;
-                        }
-
-                        changed object-in => {
-                            self.object-text = object-in;
-                        }
-
-                        changed reset => {
-                            if reset {
-                                line.subject = "";
-                                line.object = "";
-                                line.reset = false;
-                            }
-                        }
-
-                        changed subject-text => {
-                            if self.subject-text != line.subject {
-                                line.subject = self.subject-text;
-                            }
-                        }
-                        changed object-text => {
-                            if self.object-text != line.object {
-                                line.object = self.object-text;
-                            }
-                        }
+                        subject-text <=> line.subject;
+                        verb-text <=> head.verb-text;
+                        object-text <=> line.object;
 
                         width: 100%;
                         height: 100%;
@@ -319,19 +294,19 @@ export component BasicPhraseStage inherits Rectangle {
             property <bool> can-next: selected_word != -1;
             property <int> selected_word: -1;
 
-            out property <string> word: selected_word == -1 ? "" : words[selected_word].word;
-            out property <[{ word: string, reset: bool }]> words: [
-                { word: "", reset: false },
-                { word: "", reset: false },
-                { word: "", reset: false },
-                { word: "", reset: false }
+            out property <string> word: selected_word == -1 ? "" : words[selected_word];
+            out property <[string]> words: [
+                "",
+                "",
+                "",
+                "",
             ];
 
             function reset() {
-                self.words[0].reset = true;
-                self.words[1].reset = true;
-                self.words[2].reset = true;
-                self.words[3].reset = true;
+                self.words[0] = "";
+                self.words[1] = "";
+                self.words[2] = "";
+                self.words[3] = "";
 
                 self.selected_word = -1;
 
@@ -362,18 +337,7 @@ export component BasicPhraseStage inherits Rectangle {
 
                         font-weight: 600;
 
-                        changed text => {
-                            line.word = self.text;
-                        }
-
-                        property <bool> reset: line.reset;
-
-                        changed reset => {
-                            if self.reset {
-                                self.text = "";
-                                line.reset = false;
-                            }
-                        }
+                        text <=> line;
                     }
 
                     TouchArea {
@@ -420,16 +384,24 @@ export component BasicPhraseStage inherits Rectangle {
 export component ExpandPhraseStage inherits Rectangle {
     property <int> stage: -1;
 
+    in property <bool> second-pass;
+
     out property <bool> can-next: true;
 
     in property <string> subject;
     in property <string> verb;
     in property <string> object;
 
+    property <[{ text: string, label: string, color: brush, border: brush }]> lines: [
+        { text: "", label: "Var", color: Style.where-color, border: Style.where-border },
+        { text: "", label: "När", color: Style.when-color, border: Style.when-border },
+        { text: "", label: "Varför", color: Style.why-color, border: Style.why-border }
+    ];
+
     public function next() {
         self.stage += 1;
 
-        if self.stage >= 8 {
+        if self.stage >= 8 || (second-pass && self.stage >= 7) {
             done();
         }
     }
@@ -443,6 +415,11 @@ export component ExpandPhraseStage inherits Rectangle {
     }
 
     public function reset() {
+        self.stage = -1;
+
+        lines[0].text = "";
+        lines[1].text = "";
+        lines[2].text = "";
     }
 
     expand := VerticalLayout {
@@ -483,11 +460,7 @@ export component ExpandPhraseStage inherits Rectangle {
             object-border-color: Style.object-border;
         }
 
-        for line[i] in [
-            { text: "", label: "Var", color: Style.where-color, border: Style.where-border },
-            { text: "", label: "När", color: Style.when-color, border: Style.when-border },
-            { text: "", label: "Varför", color: Style.why-color, border: Style.why-border }
-        ]: HorizontalLayout {
+        for line[i] in lines: HorizontalLayout {
             visible: root.stage >= i;
 
             vertical-stretch: 1;
@@ -524,7 +497,7 @@ export component ExpandPhraseStage inherits Rectangle {
 
                 horizontal_alignment: center;
 
-                text: line.text;
+                text <=> line.text;
 
                 private property <bool> focused: (root.stage == i);
 
@@ -534,10 +507,6 @@ export component ExpandPhraseStage inherits Rectangle {
                     } else if self.has-focus {
                         self.clear-focus()
                     }
-                }
-
-                changed text => {
-                    line.text = self.text;
                 }
             }
         }

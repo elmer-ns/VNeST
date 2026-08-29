@@ -125,27 +125,27 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 ### Used by:
 
-- **i-slint-backend-selector 1.16.1**
+- **i-slint-backend-selector 1.17.1**
   - Repository: [https://github.com/slint-ui/slint.git](https://github.com/slint-ui/slint.git)
-- **i-slint-backend-winit 1.16.1**
+- **i-slint-backend-winit 1.17.1**
   - Repository: [https://github.com/slint-ui/slint.git](https://github.com/slint-ui/slint.git)
-- **i-slint-common 1.16.1**
+- **i-slint-common 1.17.1**
   - Repository: [https://github.com/slint-ui/slint.git](https://github.com/slint-ui/slint.git)
-- **i-slint-compiler 1.16.1**
+- **i-slint-compiler 1.17.1**
   - Repository: [https://github.com/slint-ui/slint.git](https://github.com/slint-ui/slint.git)
-- **i-slint-core 1.16.1**
+- **i-slint-core 1.17.1**
   - Repository: [https://github.com/slint-ui/slint.git](https://github.com/slint-ui/slint.git)
-- **i-slint-core-macros 1.16.1**
+- **i-slint-core-macros 1.17.1**
   - Repository: [https://github.com/slint-ui/slint.git](https://github.com/slint-ui/slint.git)
-- **i-slint-rendering-femtovg 1.16.1**
+- **i-slint-rendering-femtovg 1.17.1**
   - Repository: [https://github.com/slint-ui/slint.git](https://github.com/slint-ui/slint.git)
-- **i-slint-rendering-skia 1.16.1**
+- **i-slint-rendering-skia 1.17.1**
   - Repository: [https://github.com/slint-ui/slint.git](https://github.com/slint-ui/slint.git)
-- **i-slint-rendering-software 1.16.1**
+- **i-slint-rendering-software 1.17.1**
   - Repository: [https://github.com/slint-ui/slint.git](https://github.com/slint-ui/slint.git)
-- **slint 1.16.1**
+- **slint 1.17.1**
   - Repository: [https://github.com/slint-ui/slint.git](https://github.com/slint-ui/slint.git)
-- **slint-macros 1.16.1**
+- **slint-macros 1.17.1**
   - Repository: [https://github.com/slint-ui/slint.git](https://github.com/slint-ui/slint.git)
 
 ### License Text:

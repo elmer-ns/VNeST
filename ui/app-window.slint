@@ -118,10 +118,13 @@ component VNeST inherits Rectangle {
     in-out property <State> app_state;
     property <VNeSTState> state: VNeSTState.basic_phrase;
 
+    property <bool> second-pass: false;
+
     property <bool> can-next: state == VNeSTState.basic-phrase ? basic_phrase.can-next : expand_phrase.can-next;
 
     public function reset() {
         state = VNeSTState.basic-phrase;
+        second-pass = false;
 
         basic_phrase.reset();
         expand_phrase.reset();
@@ -155,7 +158,7 @@ component VNeST inherits Rectangle {
 
                 exit => {
                     app_state = State.menu;
-                    basic_phrase.reset();
+                    self.reset();
                 }
 
                 done => {
@@ -165,6 +168,8 @@ component VNeST inherits Rectangle {
             }
 
             expand_phrase := ExpandPhraseStage {
+                second-pass: second-pass;
+
                 subject: basic_phrase.subject;
                 verb: basic_phrase.verb;
                 object: basic_phrase.object;
@@ -173,11 +178,17 @@ component VNeST inherits Rectangle {
                 vertical-stretch: 1;
 
                 done => {
-                    reset();
-                    back();
+                    if second-pass {
+                        reset();
+                        back();
+                    } else {
+                        reset();
+                        second-pass = true;
+                    }
                 }
 
                 exit => {
+                    expand_phrase.reset();
                     state = VNeSTState.basic-phrase;
                 }
             }

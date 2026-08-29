@@ -4,10 +4,6 @@ export component SubjectVerbObject {
     in-out property <string> verb-text <=> verb.text;
     in-out property <string> object-text <=> object.text;
 
-    in property <bool> p-reset-subject;
-    in property <bool> p-reset-verb;
-    in property <bool> p-reset-object;
-
     // assumes subject, verb, and object boxes are the same size
     out property <length> box-width: subject.width;
     // assumes subject, verb, and object boxes are the same size
