@@ -87,7 +87,7 @@ export component BasicPhraseStage inherits Rectangle {
         }
         stage -= 1;
 
-        // workaround to avoid loosing focus when hiding last focused element in 1 specific case (might look for read fix eventually)
+        // workaround to avoid loosing focus when hiding last focused element in 1 specific case (might look for real fix eventually)
         if stage == 0 {
             focus.focus();
         }
