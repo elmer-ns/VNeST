@@ -122,6 +122,8 @@ component VNeST inherits Rectangle {
 
     property <bool> can-next: state == VNeSTState.basic-phrase ? basic_phrase.can-next : expand_phrase.can-next;
 
+    callback reset_focus();
+
     public function reset() {
         state = VNeSTState.basic-phrase;
         second-pass = false;
@@ -156,6 +158,10 @@ component VNeST inherits Rectangle {
                 visible: false;
                 vertical-stretch: 1;
 
+                reset_focus => {
+                    reset_focus();
+                }
+
                 exit => {
                     app_state = State.menu;
                     self.reset();
@@ -177,10 +183,14 @@ component VNeST inherits Rectangle {
                 visible: false;
                 vertical-stretch: 1;
 
+                reset_focus => {
+                    reset_focus();
+                }
+
                 done => {
                     if second-pass {
+                        app_state = State.menu;
                         reset();
-                        back();
                     } else {
                         reset();
                         second-pass = true;
@@ -247,11 +257,9 @@ export component AppWindow inherits Window {
     function next() {
         if state == State.vnest {
             vnest.next()
-        }
-        if state == State.menu {
+        } else if state == State.menu {
             state = State.vnest
-        }
-        if state == State.about {
+        } else if state == State.about {
             state = State.menu
         }
     }
@@ -259,8 +267,7 @@ export component AppWindow inherits Window {
     function back() {
         if state == State.about {
             state = State.menu
-        }
-        if state == State.vnest {
+        } else if state == State.vnest {
             vnest.back()
         }
     }
@@ -287,26 +294,28 @@ export component AppWindow inherits Window {
 
     scope := FocusScope {
         capture_key_pressed(event) => {
+            if event.repeat { return accept; }
+
             // DOWN_ARROW -> next()
-            if event.text == "" {
+            if event.text == Key.DownArrow {
                 next();
                 return accept;
             }
 
             // RETURN -> next()
-            if event.text == "\n" {
+            if event.text == Key.Return {
                 next();
                 return accept;
             }
 
             // UP_ARROW -> back()
-            if event.text == "" {
+            if event.text == Key.UpArrow {
                 back();
                 return accept;
             }
 
             //ESCAPE -> back()
-            if event.text == "" {
+            if event.text == Key.Escape {
                 back();
                 return accept;
             }
@@ -323,6 +332,9 @@ export component AppWindow inherits Window {
 
         vnest := VNeST {
             app_state <=> state;
+            reset_focus => {
+                scope.focus();
+            }
         }
     }
 }

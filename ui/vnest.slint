@@ -26,6 +26,8 @@ global Style {
 export component BasicPhraseStage inherits Rectangle {
     property <int> stage: 0;
 
+    callback reset_focus();
+
     out property <string> subject: selected_line == -1 ? "" : root.phrases[selected_line].subject;
     out property <string> verb: selected_line == -1 ? "" : head.verb-text;
     out property <string> object: selected_line == -1 ? "" : root.phrases[selected_line].object;
@@ -82,9 +84,7 @@ export component BasicPhraseStage inherits Rectangle {
         stage += 1;
 
         // workaround to avoid loosing focus when hiding last focused element in 1 specific case (might look for real fix eventually)
-        if read_verb_n == -1 {
-            focus.focus();
-        }
+        reset_focus();
     }
     public function back() {
         if self.help {
@@ -96,9 +96,8 @@ export component BasicPhraseStage inherits Rectangle {
         stage -= 1;
 
         // workaround to avoid loosing focus when hiding last focused element in 1 specific case (might look for real fix eventually)
-        if stage == 0 {
-            focus.focus();
-        }
+        reset_focus();
+
         if stage == -1 {
             exit();
         }
@@ -384,6 +383,8 @@ export component BasicPhraseStage inherits Rectangle {
 export component ExpandPhraseStage inherits Rectangle {
     property <int> stage: -1;
 
+    callback reset_focus();
+
     in property <bool> second-pass;
 
     out property <bool> can-next: true;
@@ -401,6 +402,8 @@ export component ExpandPhraseStage inherits Rectangle {
     public function next() {
         self.stage += 1;
 
+        reset_focus();
+
         if self.stage >= 8 || (second-pass && self.stage >= 7) {
             done();
         }
@@ -408,6 +411,8 @@ export component ExpandPhraseStage inherits Rectangle {
 
     public function back() {
         self.stage -= 1;
+
+        reset_focus();
 
         if self.stage == -1 {
             exit()
